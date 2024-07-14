@@ -3,7 +3,7 @@
     <view class="box">
       <view class="tag">
         <USegment
-          :current="pageIndex"
+          :current="segIndex"
           :values="items"
           style-type="text"
           active-color="#09C46E"
@@ -11,19 +11,19 @@
         />
       </view>
       <view class="content">
-        <view v-if="pageIndex == 0"
+        <view v-if="segIndex == 0"
           ><RepairListItem :pageIndex="pageIndex"></RepairListItem
         ></view>
-        <view v-if="pageIndex == 1"
+        <view v-if="segIndex == 1"
           ><RepairListItem :pageIndex="pageIndex"
         /></view>
-        <view v-if="pageIndex == 2"
+        <view v-if="segIndex == 2"
           ><RepairListItem :pageIndex="pageIndex"
         /></view>
-        <view v-if="pageIndex == 3"
+        <view v-if="segIndex == 3"
           ><RepairListItem :pageIndex="pageIndex"
         /></view>
-        <view v-if="pageIndex == 4"
+        <view v-if="segIndex == 4"
           ><RepairListItem :pageIndex="pageIndex"
         /></view>
       </view>
@@ -36,24 +36,38 @@ import { Ref, computed, defineComponent, ref, watch, onMounted } from "vue";
 import USegment from "@/components/USegment/index.vue";
 import RepairListItem from "./components/repairListItem/index.vue";
 //订单类别
-const pageIndex = ref(0);
+const segIndex: Ref<number | undefined> = ref(0);
+const pageIndex: Ref<number | undefined> = ref(0);
+//pageIndex转换为state
+const state = new Map([
+  [0, 0],
+  [1, 1],
+  [2, 2],
+  [3, 3],
+  [4, -10],
+]);
 export default defineComponent({
   name: "RepairList",
   components: { USegment, RepairListItem },
 
   setup(props, ctx) {
-    const items = ["全部", "进行中", "待确认", "已完成", "退单"];
-
+    const items = ["全部", "待接单", "进行中", "已完成", "退单"];
+    console.log("state", state);
     const onClickItem = (value: any) => {
-      console.log("value", value);
-      pageIndex.value = value.currentIndex;
+      console.log("state.get", state.get(value.currentIndex));
+      pageIndex.value = state.get(value.currentIndex);
+      segIndex.value = value.currentIndex;
     };
-    return { items, onClickItem, pageIndex };
+    return { items, segIndex, onClickItem, pageIndex, state };
   },
   onLoad(option) {
     if (option?.pageIndex) {
-      pageIndex.value = option.pageIndex;
+      segIndex.value = option.pageIndex;
+      pageIndex.value = state.get(Number(option.pageIndex));
     }
+  },
+  onShow() {
+    console.log("repairList show");
   },
 });
 </script>

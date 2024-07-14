@@ -42,3 +42,18 @@ export const requestGetAllRepairOrderById = (params: { id: number }) => {
     custom: { noAuth: true },
   });
 };
+
+/**
+ * 新增维修订单
+ *
+ * @return {*}
+ */
+export const requestAddRepairOrder = (data: repairOrder) => {
+  return http.request({
+    url: `api/repairOrder`,
+    method: "POST",
+    data: data,
+    params: {},
+    custom: { noAuth: true },
+  });
+};

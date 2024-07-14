@@ -20,4 +20,11 @@ export enum ActionTypes {
   getMessageList = "getMessageList",
   checkoutConversation = "checkoutConversation",
   getRepairOrders = "getRepairOrders",
+  getUserUnreviewRepairOrders = "getUserUnreviewRepairOrders",
+  getUserUnrepairRepairOrders = "getUserUnrepairRepairOrders",
+  getUserWorkingRepairOrders = "getUserWorkingRepairOrders",
+  getUserUnconfirmRepairOrders = "getUserUnconfirmRepairOrders",
+  getUserFinishRepairOrders = "getUserFinishRepairOrders",
+  getUserAftersaleRepairOrders = "getUserAftersaleRepairOrders",
+  getUserTerminateRepairOrders = "getUserTerminateRepairOrders",
 }

@@ -7,9 +7,27 @@
       }
     },
     {
+      "path": "pages/createAddress/index",
+      "style": {
+        "navigationBarTitleText": "新增地址",
+        "navigationBarBackgroundColor": "#09C46E",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/editAddress/index",
+      "style": {
+        "navigationBarTitleText": "修改地址",
+        "navigationBarBackgroundColor": "#09C46E",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/mall/index",
       "style": {
-        "navigationBarTitleText": "商场"
+        "navigationBarTitleText": "商城",
+        "navigationBarBackgroundColor": "#09C46E",
+        "navigationBarTextStyle": "white"
       }
     },
     {
@@ -18,6 +36,23 @@
         "navigationBarTitleText": "设备维修照片上传"
       }
     },
+    {
+      "path": "pages/publishOrder/index",
+      "style": {
+        "navigationBarTitleText": "发布维修订单",
+        "navigationBarBackgroundColor": "#09C46E",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/address/index",
+      "style": {
+        "navigationBarTitleText": "我的地址管理",
+        "navigationBarBackgroundColor": "#09C46E",
+        "navigationBarTextStyle": "white"
+      }
+    },
+
     {
       "path": "pages/orderDetail/index",
       "style": {
@@ -149,12 +184,12 @@
         "iconPath": "static/images/tabbar/home.png",
         "selectedIconPath": "static/images/tabbar/home-active.png"
       },
-      // {
-      //   "pagePath": "pages/mall/index",
-      //   "text": "商城",
-      //   "iconPath": "static/images/tabbar/task.png",
-      //   "selectedIconPath": "static/images/tabbar/task-active.png"
-      // },
+      {
+        "pagePath": "pages/mall/index",
+        "text": "商城",
+        "iconPath": "static/images/tabbar/mall.png",
+        "selectedIconPath": "static/images/tabbar/mall-active.png"
+      },
       {
         "pagePath": "pages/me/index",
         "text": "我的",
@@ -163,7 +198,8 @@
       }
     ]
   },
-  "condition": { //模式配置，仅开发期间生效
+  "condition": {
+    //模式配置，仅开发期间生效
     "current": 0, //当前激活的模式（list 的索引项）
     "list": [
       {

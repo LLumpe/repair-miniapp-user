@@ -467,78 +467,79 @@ export interface zzzzzzzzzzzzzzz {
 /* 维修订单类型 */
 export interface repairOrder {
   // 关联表ID
-  id: number;
+  id?: number;
   //用户ID
-  userId: number;
+  userId?: number | null;
   //维修订单名称
-  name: string;
+  name?: string | null;
   //用户电话
-  phone?: string;
+  phone?: string | null;
   //维修地区-省
-  province: string;
+  province?: string | null;
   //维修地区-城市
-  city: string;
+  city?: string | null;
   //维修地区-地区
-  district: string;
+  district?: string | null;
   //维修地区-详细地址
-  address: string;
+  address?: string | null;
   //维修地区-经度
-  latitude: number;
+  latitude?: number | null;
   //维修地区-维度
-  longitude: number;
+  longitude?: number | null;
   //维修详情
-  repairEquipmentContent: repairDetail;
+  repairEquipmentContent?: Array<repairDetail> | null;
   //维修数量
-  repairEquipmentNumber: number;
+  repairEquipmentNumber?: number | null;
   //期望维修日期
-  expectDate: string;
-  expectVolunteerId?: number;
-  volunteerId?: number;
-  orderType: number;
-  cancelNumber: number;
-  creatorType?: number;
-  state: number;
-  createdAt: string;
-  checkAt: string;
-  receiveAt?: string;
-  finishAt?: string;
-  confirmAt?: string;
-  cancelAt?: string;
-  updatedAt?: string;
-  familyUser?: familyUser;
-  startAt?: string;
-  endAt?: string;
-  orderColumn?: string;
-  orderWay?: string;
+  expectDate?: string | null;
+  expectVolunteerId?: number | null;
+  volunteerId?: number | null;
+  orderType?: number | null;
+  cancelNumber?: number | null;
+  creatorType?: number | null;
+  state?: number | null;
+  createdAt?: string | null;
+  checkAt?: string | null;
+  receiveAt?: string | null;
+  finishAt?: string | null;
+  confirmAt?: string | null;
+  cancelAt?: string | null;
+  updatedAt?: string | null;
+  createTime?: string | null;
+  familyUser?: familyUser | null;
+  startAt?: string | null;
+  endAt?: string | null;
+  orderColumn?: string | null;
+  orderWay?: string | null;
   //距离
-  distance?: string;
+  distance?: string | null;
 }
 
 export interface familyUser {
   //用户id
-  id: number;
+  id?: number;
   //姓名
-  name?: string;
+  name?: string | null;
   //电话
-  phone?: string;
+  phone?: string | null;
   //性别
-  sex?: number;
+  sex?: number | null;
   //昵称
-  nickName?: string;
+  nickName?: string | null;
   //用户头像
-  avatarUrl?: string;
+  avatarUrl?: string | null;
   //用户国家
-  country?: string;
+  country?: string | null;
   //省
-  province?: string;
+  province?: string | null;
   //城市
-  city?: string;
+  city?: string | null;
   //地区
-  district?: string;
+  district?: string | null;
   //状态
-  state?: number;
+  state?: number | null;
   //注册时间
-  registerTime?: string;
+  registerTime?: string | null;
 }
 
 export interface repairDetail {
@@ -548,4 +549,26 @@ export interface repairDetail {
   repairDesc?: string;
   //上传照片
   equipmentImg?: string[];
+}
+
+//用户地址
+export interface Address {
+  address?: string;
+  city?: string;
+  createdAt?: string;
+  distinct?: string;
+  endAt?: string;
+  id?: number;
+  index?: number;
+  isDefault?: number;
+  latitude?: number;
+  longitude?: number;
+  name?: string;
+  orderColumn?: string;
+  orderWay?: string;
+  phone?: string;
+  province?: string;
+  startAt?: string;
+  updatedAt?: string;
+  userId?: number;
 }

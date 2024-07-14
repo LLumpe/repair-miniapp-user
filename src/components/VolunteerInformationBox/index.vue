@@ -8,8 +8,7 @@
           backgroundImage:
             status !== 'unlogin' && avatarUrl ? `url(${avatarUrl})` : null,
         }"
-      >
-      </view>
+      ></view>
       <view class="name">
         <span class="name-lg">
           {{ status !== "unlogin" && name ? name : "登录/注册" }}</span
@@ -54,115 +53,6 @@
           <view class="list-box-title">{{ item.title }}</view>
         </view>
       </view>
-      <!-- <view class="left">
-        <view
-          class="avatar"
-          :class="{'avatar--nologin': status === 'unlogin' || !avatarUrl}"
-          :style="{backgroundImage: status !== 'unlogin' && avatarUrl ? `url(${avatarUrl})` : null}"
-        />
-        <view
-          v-if="status === 'unlogin'"
-          class="tag tag--nologin"
-        >
-          未登录
-        </view>
-        <view
-          v-if="status !== 'unlogin' && registerTimeFromNow"
-          class="tag tag--time"
-        >
-          {{ `加入 ${registerTimeFromNow}` }}
-        </view>
-      </view>
-      <view class="right">
-        <view class="name">
-          {{ status !== 'unlogin' && name ? name : "志愿者" }}
-          <view
-            v-if="status !== 'unlogin'"
-            class="sex-icon"
-            :class="[sex === 1 ? 'sex-icon-man' : sex === 2 ? 'sex-icon-woman' : '']"
-          />
-        </view>
-        
-        <button
-          v-if="status === 'unlogin'"
-          class="action-btn"
-          hover-class="none"
-          @click="handleLogin"
-        >
-          <view class="action-btn-text">
-            去登录
-            <text
-              class="iconfont icon-arrow-right"
-            />
-          </view>
-        </button>
-        <button
-          v-if="status === 'user'"
-          class="action-btn"
-          @click="handleClickPhone"
-        >
-          <view class="action-btn-text">
-            TEL: {{ phone }}
-            <text
-              class="iconfont icon-arrow-right"
-            />
-          </view>
-        </button>
-        <button
-          v-if="status === 'me'"
-          class="action-btn"
-          @click="handleEditProfile"
-        >
-          <view class="action-btn-text">
-            修改个人信息
-            <text
-              class="iconfont icon-arrow-right"
-            />
-          </view>
-        </button>
-
-        <view class="divider" />
-        <view class="tasks">
-          <view
-            class="task"
-          >
-            <u-count-to
-              :end-val="doingMissionsNumber"
-              font-size="44"
-              line-height="60"
-              color="#000000"
-            />
-            <view class="task-description">
-              正在进行
-            </view>
-          </view>
-          <view class="task">
-            <u-count-to
-              :end-val="endedMissionsNumber"
-              font-size="44"
-              line-height="60"
-              color="#000000"
-            />
-            <view class="task-description">
-              历史任务
-            </view>
-          </view>
-          <view
-            v-if="status === 'me'"
-            class="task"
-          >
-            <u-count-to
-              :end-val="allMissionsNumber"
-              font-size="44"
-              line-height="60"
-              color="#000000"
-            />
-            <view class="task-description">
-              共计参与
-            </view>
-          </view>
-        </view>
-      </view> -->
     </view>
     <view class="service">
       <view class="title">
@@ -172,80 +62,13 @@
           <text class="iconfont icon-arrow-right" />
         </view>
       </view>
+      <view class="content">
+        <view class="content-item" @click="handleEditAddress">
+          <image src="@/static/images/user/address.png" />
+          <span> 地址管理 </span>
+        </view>
+      </view>
     </view>
-    <!--   <view
-      v-if="historyMissions"
-      class="list"
-    >
-      <view
-        v-for="item in historyMissions"
-        :key="item.id"
-        class="list-item"
-      >
-        <view
-          v-if="item.state === 1"
-          class="list-item-badge badge-running"
-        >
-          进行中
-        </view>
-        <view
-          v-if="item.state === 2"
-          class="list-item-badge badge-complete"
-        >
-          已完成
-        </view>
-        <view
-          v-if="item.state === 3"
-          class="list-item-badge badge-timeout"
-        >
-          已归档
-        </view>
-        <view
-          v-if="item.state === 4"
-          class="list-item-badge badge-canceled"
-        >
-          已归档
-        </view>
-        <view class="list-item-content">
-          <image
-            v-if="item.oldMan"
-            class="list-item-content-photo"
-            :src="item.oldMan.identificationPhoto"
-            mode="aspectFill"
-          />
-          <view class="list-item-content-info">
-            <view class="list-item-content-info-title">
-              {{ item.district }}走失老人
-            </view>
-            <view
-              v-if="item.lostTime"
-              class="list-item-content-info-desc"
-            >
-              于 {{ item.lostTime }}
-            </view>
-            <view class="list-item-content-info-desc">
-              走失于{{ item.place }}附近
-            </view>
-          </view>
-        </view>
-        <view
-          v-if="item.state === 1"
-          class="list-item-icon icon-running"
-        />
-        <view
-          v-if="item.state === 2"
-          class="list-item-icon icon-complete"
-        />
-        <view
-          v-if="item.state === 3"
-          class="list-item-icon icon-timeout"
-        />
-        <view
-          v-if="item.state === 4"
-          class="list-item-icon icon-canceled"
-        />
-      </view> -->
-    <!--    </view> -->
   </view>
 </template>
 
@@ -271,8 +94,20 @@ const useLogin = () => {
   const handleLogin = () => {
     authService.login(true);
   };
-
-  return { handleLogin };
+  const handleClickItem = (type: number) => {
+    if (type === 1) {
+    }
+  };
+  // const myInfo = computed(() => {
+  //   const store = useStore();
+  //   return store.getters.userInfo;
+  // });
+  const handleEditAddress = () => {
+    uni.navigateTo({
+      url: "/pages/address/index",
+    });
+  };
+  return { handleLogin, handleClickItem, handleEditAddress };
 };
 
 // const useHistory = (status: "unlogin" | "me" | "user", info: any) => {
@@ -340,6 +175,13 @@ export default defineComponent({
     },
   },
   setup(props) {
+    //获取各个订单数量
+    // const getOrderNumber = (type: "string") => {
+    //   //获取vuex实例
+    //   const store = useStore();
+    //   const repairOrder = store.getters.userRepairOrder;
+    //   console.log("repairOrder", repairOrder);
+    // };
     const name = computed(() => {
       return props.status === "me"
         ? props?.userInfo?.volunteerInformation?.name
@@ -454,6 +296,7 @@ export default defineComponent({
       handleNavigateToRepairList,
       // ...useHistory(props.status, props.userInfo),
       handleMoreRepairOrder,
+      // getOrderNumber,
     };
   },
 });
@@ -717,6 +560,40 @@ export default defineComponent({
       align-items: center;
       font-size: $uni-font-size-xs;
       color: #979797;
+    }
+  }
+  .content {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+    place-items: center;
+    overflow: hidden;
+    &-item {
+      width: 130rpx;
+      height: 130rpx;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      border-radius: 15rpx;
+      transition: all 0.2s;
+      &:active {
+        box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset,
+          rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+      }
+      image {
+        width: 60rpx;
+        height: 60rpx;
+      }
+      span {
+        margin-top: 10rpx;
+        font-size: $uni-font-size-sm;
+        color: $uni-text-color;
+      }
     }
   }
 }

@@ -5,10 +5,15 @@
   "versionName": "1.0.0",
   "versionCode": "100",
   "transformPx": false,
-  "app-plus": { /* 5+App特有相关 */
-    "modules": { /* 模块配置 */},
-    "distribute": { /* 应用发布信息 */
-      "android": { /* android打包配置 */
+  "app-plus": {
+    /* 5+App特有相关 */
+    "modules": {
+      /* 模块配置 */
+    },
+    "distribute": {
+      /* 应用发布信息 */
+      "android": {
+        /* android打包配置 */
         "permissions": [
           "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
           "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
@@ -34,14 +39,20 @@
           "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
         ]
       },
-      "ios": { /* ios打包配置 */},
-      "sdkConfigs": { /* SDK配置 */}
+      "ios": {
+        /* ios打包配置 */
+      },
+      "sdkConfigs": {
+        /* SDK配置 */
+      }
     },
     "usingComponents": true
   },
-  "quickapp": { /* 快应用特有相关 */},
-  "mp-weixin": { /* 小程序特有相关 */
-    "usingComponents": true,
+  "quickapp": {
+    /* 快应用特有相关 */
+  },
+  "mp-weixin": {
+    /* 小程序特有相关 */ "usingComponents": true,
     "appid": "wx9cd18091abc31d15",
     "setting": {
       "urlCheck": true
@@ -49,11 +60,12 @@
     "permission": {
       "scope.userLocation": {
         "desc": "你的位置信息将用于小程序获取你的实时位置"
+      },
+      "scope.userFuzzyLocation": {
+        "desc": "你的位置信息将用于小程序定位"
       }
     },
-    "requiredPrivateInfos": [
-      "getLocation"
-    ],
+    "requiredPrivateInfos": ["getLocation"],
     "plugins": {
       "routePlan": {
         "version": "1.0.12",
@@ -62,6 +74,10 @@
       "chooseLocation": {
         "version": "1.0.5",
         "provider": "wx76a9a06e5b4e693e"
+      },
+      "citySelector": {
+        "version": "1.0.2",
+        "provider": "wx63ffb7b7894e99ae"
       }
     }
   },

@@ -190,14 +190,14 @@
 </template>
 
 <script lang="ts">
-import { ref, Ref, reactive, defineComponent } from "vue";
+import { ref, Ref, reactive, defineComponent, watch } from "vue";
 import UPopup from "@/components/UPopup/index.vue";
+import jestConfig from "jest.config";
 const repairIndex: Ref<number> = ref(0);
 const equipmentList: Ref<any> = ref([]);
 const pickIndex: Ref<number> = ref(0);
 const showImage: Ref<boolean> = ref(false);
 const showPhone: Ref<boolean> = ref(false);
-const orderDetail: Ref<object | {}> = ref({});
 export default defineComponent({
   name: "RepairOrderDetailInfo",
   components: { UPopup },
@@ -212,7 +212,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    console.log("props", props.orderDetail);
+    console.log("props---->", props.orderDetail);
 
     //待维修设备选择设备
     const handlePickDevice = (e: any) => {
@@ -238,7 +238,6 @@ export default defineComponent({
       );
       console.log("equipment", equipment);
       equipmentList.value = equipment;
-      return {};
     };
     //联系用户事件
     const handleShowUserPhone = () => {
@@ -249,6 +248,14 @@ export default defineComponent({
         phoneNumber: value,
       });
     };
+    //监听props中data的变化
+    watch(
+      props,
+      (newValue: any, oldValue: any) => {
+        getCurrentRepairEquipment();
+      },
+      { immediate: true }
+    );
     return {
       repairIndex,
       equipmentList,
@@ -259,7 +266,6 @@ export default defineComponent({
       handleShowUserPhone,
       showImageEvent,
       showPhone,
-      ...getCurrentRepairEquipment(),
     };
   },
 });
@@ -271,11 +277,15 @@ export default defineComponent({
 }
 .repairOrderItem {
   width: 100%;
-  margin: 20rpx 0 20rpx 0;
+  margin: 20rpx 0 0 0;
+  background-color: #ffffff;
+  border-radius: 20rpx;
   .box {
     width: 100%;
+    border-radius: 15rpx;
     &-info {
       width: 100%;
+      height: fit-content;
       &-user {
         width: 100%;
         @include flex;
@@ -287,13 +297,14 @@ export default defineComponent({
         margin-top: 20rpx;
         width: 100%;
         @include flex;
+        margin-left: 20rpx;
+
         &-label {
           width: 180rpx;
           font-size: $uni-font-size-sm;
           color: $uni-text-color-grey;
         }
         &-value {
-          margin-left: 20rpx;
           flex: 1;
           white-space: nowrap; /* 强制文本在一行显示 */
           overflow: hidden; /* 隐藏超出容器的内容 */

@@ -9,8 +9,8 @@
               v-model="formData.desc"
               type="textArea"
               placeholder="请输入维修描述"
-              maxlength="50"
-            ></textarea>
+              :maxlength="50"
+            />
           </view>
         </view>
         <view class="box-form-item">
@@ -38,12 +38,8 @@
 import { ref, Ref, reactive, defineComponent } from "vue";
 import UUploader from "@/components/UUploader/index.vue";
 import { requestUploadImage } from "@/api/myRepairOrder";
-import UInput from "@/components/UInput/index.vue";
-import UEasyInput from "@/components/UEasyInput/index.vue";
 import {
   hideLoading,
-  navigateBack,
-  navigateTo,
   showLoading,
   showModalError,
   showToast,
