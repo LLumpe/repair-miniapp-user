@@ -91,7 +91,7 @@
                 :key="index"
                 @click="showImageEvent(item, index)"
               >
-                <image :src="item" />
+                <image :src="item" mode="scaleToFill" />
               </view>
             </view>
             <view
@@ -277,12 +277,13 @@ export default defineComponent({
 }
 .repairOrderItem {
   width: 100%;
-  margin: 20rpx 0 0 0;
   background-color: #ffffff;
   border-radius: 20rpx;
   .box {
     width: 100%;
     border-radius: 15rpx;
+    padding: none;
+    padding: 0 40rpx 40rpx 40rpx;
     &-info {
       width: 100%;
       height: fit-content;
@@ -300,7 +301,7 @@ export default defineComponent({
         margin-left: 20rpx;
 
         &-label {
-          width: 180rpx;
+          width: 170rpx;
           font-size: $uni-font-size-sm;
           color: $uni-text-color-grey;
         }
@@ -312,24 +313,22 @@ export default defineComponent({
           font-size: $uni-font-size-sm;
           color: $uni-text-color;
           &-image {
-            height: 200rpx;
             margin-right: 30rpx;
             text-align: center;
             align-items: center;
             display: flex;
             &-item {
               display: flex;
-              border-radius: 20rpx;
+              border-radius: 10rpx;
               border: 1rpx solid gainsboro;
               margin-right: 20rpx;
               &:active {
                 border: 1rpx solid rgba(124, 124, 124, 0.7);
               }
               image {
-                width: 160rpx;
-                height: 160rpx;
-                border-radius: 20rpx;
-                object-fit: contain;
+                width: 120rpx;
+                height: 120rpx;
+                border-radius: 10rpx;
               }
               span {
                 font-size: $uni-font-size-sm;

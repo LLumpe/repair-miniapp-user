@@ -12,9 +12,9 @@ const RepairOrder: Module<RepairOrder, RootState> = {
   mutations: {
     [MutationTypes.SET_MY_REPAIRORDERS]: (
       state,
-      repairOrderList: typeof state.userRepairOrder
+      userRepairOrder: typeof state.userRepairOrder
     ) => {
-      state.userRepairOrder = repairOrderList;
+      state.userRepairOrder = userRepairOrder;
     },
   },
 
@@ -24,9 +24,8 @@ const RepairOrder: Module<RepairOrder, RootState> = {
       return new Promise<void>(async (resolve, reject) => {
         try {
           const res = await requestGetAllUserRepairOrder();
-          // console.log("res",res)
           if (res.data.result) {
-            commit(MutationTypes.SET_MY_MISSIONS, res.data.result);
+            commit(MutationTypes.SET_MY_REPAIRORDERS, res.data.result.records);
           }
           resolve();
         } catch (e) {

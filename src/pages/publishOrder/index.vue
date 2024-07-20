@@ -15,10 +15,7 @@
               placeholder="请输入维修描述"
               :maxlength="50"
             /> -->
-            <view
-              class="box-form-item-content-address"
-              v-model="formData.address"
-            >
+            <view class="box-form-item-content-address">
               <view>
                 <view style="font-size: 30rpx; margin-bottom: 5rpx"
                   >{{ formData.province || "" }}
@@ -68,7 +65,7 @@
           </view>
         </view>
       </view>
-      <view class="box-form" v-for="(item, index) in deviceNumber">
+      <view :key="index" class="box-form" v-for="(item, index) in deviceNumber">
         <title class="box-form-item-title">维修设备信息</title>
         <view class="box-form-item">
           <view label="维修设备填报" class="box-form-item-content">
@@ -100,14 +97,6 @@
                   故障照片上传
                 </title>
                 <view label="上传图片" class="box-form-item-content-image">
-                  <!-- <UUploader
-                    v-modal="formData.file"
-                    :image-styles="imageStyles"
-                    @select="handleImageSelect"
-                    @delete="handleDelete"
-                    limit="3"
-                    title="最多选择3张图片"
-                  /> -->
                   <UUploader
                     :image-styles="imageStyles"
                     @select="handleImageSelect($event, index)"
@@ -146,6 +135,7 @@ import {
   showToast,
 } from "@/utils/helper";
 import { Address } from "@/api/types/models";
+import { useStore } from "vuex";
 export interface formType {
   id: number;
   userId: number;
@@ -163,14 +153,28 @@ export interface formType {
   repairEquipmentNumber: number;
   repairEquipmentContent: Array<repairEquipmentDetail> | string;
 }
+export interface UserType {
+  id: number;
+  name: string;
+  phone: string;
+  sex: number;
+  nickName: string;
+  avatarUrl: string;
+  country: string;
+  province: string;
+  city: string;
+  district: string;
+  state: number;
+  registerTime: string;
+}
 export interface repairEquipmentDetail {
   equipmentName: string;
   repairDesc: string;
   equipmentImg: Array<string>;
 }
 export default defineComponent({
-  components: { UUploader },
   name: "PublishOrder",
+  components: { UUploader },
   setup() {
     //获取当前日期
     const getDate = (type?: string) => {
@@ -231,11 +235,14 @@ export default defineComponent({
         } else if (deviceNumber.value === 0) {
           showToast("请添加需要维修的设备", "none");
         } else {
-          formData.repairEquipmentContent = JSON.stringify(
-            formData.repairEquipmentContent
-          );
-          console.log("formData", formData);
-          const res = await requestAddRepairOrder(formData);
+          const newData = {
+            ...formData,
+            repairEquipmentContent: JSON.stringify(
+              formData.repairEquipmentContent
+            ),
+          };
+          console.log("formData", newData);
+          const res = await requestAddRepairOrder(newData);
           console.log("res", res);
           if (res.data.success) {
             hideLoading();
@@ -249,7 +256,7 @@ export default defineComponent({
       } catch (error) {
         console.log(error);
         hideLoading();
-        showModalError("上传图片失败");
+        showModalError("提交失败");
       }
     };
     const handleClick = (index: number) => {
@@ -351,7 +358,6 @@ export default defineComponent({
       handleAdd,
     };
   },
-  onLoad(option) {},
 });
 </script>
 

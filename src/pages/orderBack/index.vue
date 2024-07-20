@@ -3,41 +3,26 @@
     <view class="box">
       <view class="box-form">
         <view class="box-form-item">
-          <title class="box-form-item-title">维修描述</title>
+          <title class="box-form-item-title">退单/返修描述</title>
           <view label="图片描述" class="box-form-item-desc">
             <textarea
               v-model="formData.desc"
               type="textArea"
-              placeholder="请输入维修描述"
+              placeholder="请输入返修/退单的理由"
               :maxlength="50"
-            />
-          </view>
-        </view>
-        <view class="box-form-item">
-          <title class="box-form-item-title">上传维修照片</title>
-          <view label="上传图片" class="box-form-item-image">
-            <UUploader
-              v-modal="formData.file"
-              :image-styles="imageStyles"
-              @select="handleImageSelect"
-              @delete="handleDelete"
-              limit="3"
-              title="最多选择3张图片"
             />
           </view>
         </view>
       </view>
       <view class="box-button">
-        <button @click="handleSubmit" type="primary">提交</button>
+        <button @click="handleSubmit">提交</button>
       </view>
     </view>
   </view>
 </template>
 
 <script lang="ts">
-import { ref, Ref, reactive, defineComponent } from "vue";
-import UUploader from "@/components/UUploader/index.vue";
-import { requestUploadImage } from "@/api/myRepairOrder";
+import { reactive, defineComponent } from "vue";
 import {
   hideLoading,
   showLoading,
@@ -46,8 +31,7 @@ import {
 } from "@/utils/helper";
 export interface formType {
   id: string;
-  desc: string;
-  file: object[];
+  desc: string; //退单原因
 }
 export default defineComponent({
   name: "UploadRepairImage",
@@ -57,70 +41,22 @@ export default defineComponent({
       default: "",
     },
   },
-  components: { UUploader },
   setup() {
     const formData = reactive<formType>({
       id: "",
       desc: "",
-      file: [],
     });
     const handleSubmit = () => {
       try {
       } catch (error) {
         console.log(error);
         hideLoading();
-        showModalError("上传图片失败");
+        showModalError("提交失败");
       }
-    };
-    //选择图片
-    const handleImageSelect = async (e: any) => {
-      showLoading();
-      try {
-        const tempFilePath = e.tempFilePaths[0];
-        const imageUrl = await requestUploadImage(tempFilePath);
-        let path = {
-          url: imageUrl.data.data,
-          extname: "",
-          tempFilePath: tempFilePath,
-          name: "",
-        };
-        formData.file.push(path);
-        showToast("加载成功", "success");
-        hideLoading();
-      } catch (error) {
-        console.log(error);
-        hideLoading();
-        showModalError("上传图片失败");
-      }
-      // console.log("e", e);
-      // formData.file.push(e?.tempFiles[0]);
-      // return true;
-    };
-    //删除照片
-    const handleDelete = (e: any) => {
-      console.log("e", e);
-      const num = formData.file.findIndex(
-        (item: any) => item?.tempFilePath === e.tempFilePath
-      );
-      console.log("e", num);
-      formData.file.splice(num, 1);
-    };
-    //照片样式
-    const imageStyles = {
-      width: 100,
-      height: 100,
-      border: {
-        width: 2,
-        style: "dashed",
-        radius: "10px",
-      },
     };
     return {
       formData,
       handleSubmit,
-      imageStyles,
-      handleImageSelect,
-      handleDelete,
     };
   },
   onLoad(options) {
@@ -175,12 +111,6 @@ export default defineComponent({
             }
           }
         }
-        &-image {
-          width: 100%;
-          height: 300rpx;
-          margin-top: 20rpx;
-          border-radius: 20rpx;
-        }
       }
     }
     &-button {
@@ -198,6 +128,9 @@ export default defineComponent({
         margin-top: 20rpx;
         width: 700rpx;
         border-radius: 50rpx;
+        font-weight: 600;
+        color: #ffffff;
+        background-color: $uni-color-primary;
       }
     }
   }

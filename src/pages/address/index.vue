@@ -23,6 +23,7 @@
             </view>
           </view>
           <image
+            v-if="select === false"
             src="@/static/images/home/edit.png"
             @click="handleEditAddress(item)"
           />
@@ -30,18 +31,18 @@
         <view class="box-item-option">
           <view class="box-item-option-checkbox">
             <checkbox
-              :checked="item.isDefault === 0"
+              :checked="item.isDefault === 1"
               style="transform: scale(0.7)"
-            />是否设为默认地址
+            />默认维修地址
           </view>
-          <span @click="handleConfirmDelete(item)" v-if="select === false"
-            >删除</span
-          >
+          <span @click="handleConfirmDelete(item)" v-if="select === false">
+            删除
+          </span>
         </view>
       </view>
 
       <view class="box-empty" v-if="!myAddress.length">
-        <image src="@/static/images/leaderBoard/empty.png" class="empty-icon" />
+        <image src="@/static/images/address/empty.png" class="empty-icon" />
         <span> 暂无地址信息，请添加！</span>
       </view>
     </view>
@@ -154,6 +155,8 @@ export default defineComponent({
     console.log("option", option.select);
     if (option.select) {
       select.value = option.select;
+    } else {
+      select.value = false;
     }
   },
   onShow() {
@@ -168,13 +171,12 @@ export default defineComponent({
   background: linear-gradient(
     to bottom,
     rgba(9, 196, 110, 1),
-    rgba(9, 196, 110, 1),
-    rgba(9, 196, 110, 1),
-    rgba(16, 216, 122, 0.4),
-    rgba(17, 206, 118, 0.2),
-    rgba(30, 212, 70, 0)
+    rgb(229, 236, 232),
+    rgb(238, 240, 239),
+    rgb(206, 233, 220),
+    rgb(237, 241, 240),
+    rgba(255, 255, 255, 1)
   );
-
   .box {
     width: 100%;
     min-height: 90vh;

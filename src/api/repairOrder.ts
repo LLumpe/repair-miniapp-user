@@ -57,3 +57,17 @@ export const requestAddRepairOrder = (data: repairOrder) => {
     custom: { noAuth: true },
   });
 };
+/**
+ * 用户确认完成订单
+ *
+ * @return {*}
+ */
+export const requestUserFinishRepairOrder = (data: any) => {
+  return http.request({
+    url: `api/repairOrder/confirm`,
+    method: "POST",
+    data: data,
+    params: {},
+    custom: { noAuth: true },
+  });
+};

@@ -1,38 +1,56 @@
 <template>
   <view class="repairDetail">
     <view class="box">
+      <view class="box-title" v-if="currentRepairOrder.state === 0">
+        <h1>待审核</h1>
+        <h2>订单正在审核中，请您耐心等待~</h2>
+      </view>
       <view class="box-title" v-if="currentRepairOrder.state === 1">
+        <h1>待接单</h1>
+        <h2>订单正在等待师傅接单，祝您生活愉快~</h2>
+      </view>
+      <view class="box-title" v-if="currentRepairOrder.state === 2">
         <h1>进行中</h1>
         <h2>订单正在进行中，祝您生活愉快~</h2>
       </view>
-      <view class="box-title" v-if="currentRepairOrder.state === 2">
-        <h1>等待用户确认</h1>
-        <h2>订单正在等待用户确认，祝您生活愉快~</h2>
-      </view>
       <view class="box-title" v-if="currentRepairOrder.state === 3">
+        <h1>待确认</h1>
+        <h2>订单已维修完毕，请您确认~</h2>
+      </view>
+      <view class="box-title" v-if="currentRepairOrder.state === 4">
         <h1>已完成</h1>
         <h2>订单已经完成，祝您生活愉快~</h2>
       </view>
       <view class="box-title" v-if="currentRepairOrder.state === -10">
-        <h1>已退单</h1>
-        <h2>订单已经退单，祝您生活愉快~</h2>
+        <h1>已售后</h1>
+        <h2>订单已经售后，祝您生活愉快~</h2>
+      </view>
+      <view class="box-title" v-if="currentRepairOrder.state === -20">
+        <h1>已终止</h1>
+        <h2>订单已经终止，祝您生活愉快~</h2>
       </view>
       <view class="box-notice">
         <view class="box-notice-image">
-          <image src="@/static/images/repairDetail/repairWorker.svg" />
+          <image src="@/static/images/repairDetail/repairMan.png" />
         </view>
         <view class="box-notice-content">
           <span v-if="currentRepairOrder.state === 1">
-            HI!~订单正在进行中，待设备维修完毕后请上传维修图片和备注!
+            HI!~订单正在等待师傅接单，请您耐心等待!
           </span>
           <span v-if="currentRepairOrder.state === 2">
-            HI!~订单正在等待用户确认哦，请维修师傅耐心等待!
+            HI!~订单正在进行中，请您耐心等待师傅完成维修!
           </span>
           <span v-if="currentRepairOrder.state === 3">
-            HI!~订单已经由用户确认完成了哦，感谢您对该订单的维修支持!
+            HI!~订单已由维修师傅完成，请您确认!
+          </span>
+          <span v-if="currentRepairOrder.state === 4">
+            HI!~订单已经完成，感谢您选择我们的服务!
           </span>
           <span v-if="currentRepairOrder.state === -10">
-            HI!~订单已经由用户退单了哦，感谢您对该订单的维修支持!
+            HI!~订单已经售后，感谢您选择我们的服务!
+          </span>
+          <span v-if="currentRepairOrder.state === -20">
+            HI!~订单已经终止，感谢您选择我们的服务!
           </span>
         </view>
         <RepairDetailNotice />
@@ -47,11 +65,13 @@
         <view class="box-order-title"> 订单详情：</view>
         <view class="box-order-content">
           <view class="box-order-steps">
-            <USteps
-              :options="stepList"
-              :active="currentRepairOrder.state"
-              active-color="#09C46E"
-            />
+            <view class="box-order-steps-item">
+              <USteps
+                :options="stepList"
+                :active="currentRepairOrder.state"
+                active-color="#09C46E"
+              />
+            </view>
           </view>
           <RepairOrderDetailInfo :orderDetail="currentRepairOrder" />
         </view>
@@ -59,32 +79,45 @@
       <view v-if="currentRepairOrder.state !== 1" class="box-order">
         <view class="box-order-title"> 维修记录：</view>
         <view class="box-order-content">
-          <RepairOrderWorkerInfo></RepairOrderWorkerInfo>
+          <RepairOrderWorkerInfo :orderDetail="currentRepairOrder" />
         </view>
       </view>
 
       <view class="block" />
 
       <view class="box-option">
-        <view v-if="currentRepairOrder.state === 1" class="box-option-item">
+        <view
+          v-if="
+            currentRepairOrder.state === 0 || currentRepairOrder.state === 1
+          "
+          class="box-option-item"
+        >
           取消订单
         </view>
         <view
-          v-if="currentRepairOrder.state === 2"
+          v-if="
+            currentRepairOrder.state === 3 || currentRepairOrder.state === 4
+          "
           class="box-option-item"
-          @click="handlePushUser"
+          @click="handleRepairBack"
         >
-          提醒用户
-        </view>
-        <view v-if="currentRepairOrder.state === -10" class="box-option-item">
-          查看历史订单
+          返修
         </view>
         <view
-          v-if="currentRepairOrder.state === 1"
+          v-if="
+            currentRepairOrder.state === 3 || currentRepairOrder.state === 4
+          "
+          class="box-option-item"
+          @click="handleOrderBack"
+        >
+          退单
+        </view>
+        <view
+          v-if="currentRepairOrder.state === 3"
           class="box-option-item"
           @click="handleSubmitImage"
         >
-          确认订单
+          确认完成
         </view>
       </view>
 
@@ -100,16 +133,16 @@
           <h1></h1>
           <view class="message-content">
             <view>
-              尊敬的维修师傅，您好！在完成维修工作后，请您遵循以下须知内容，以确保顺利交付和客户满意：
+              尊敬的客户，您好！感谢您选择我们的维修服务，为了确保您的权益，请仔细阅读一下确认订单须知：
             </view>
             <view class="message-content-text">
-              请现场测试维修后的设备或系统，确保其正常运转，确保维修项目按照要求完成，无遗漏或质量问题。
+              请检查师傅是否已按照订单要求完成所有维修项目，若有任何未完成或遗漏的项目，请及时告知师傅或联系客户服务。
             </view>
             <view class="message-content-text">
-              请清理维修现场，确保工作区域干净整洁,将拆卸的零件、工具和垃圾妥善处理。
+              请仔细检查维修质量，确保所有修理部位正常运行且没有出现新的问题。
             </view>
             <view class="message-content-text">
-              与客户核对维修费用明细，确保客户对费用无异议,根据公司的结算方式，完成费用收取或确认。
+              如有任何不满意之处，可以后续提供退单或者返修的需求。
             </view>
             <br />
           </view>
@@ -141,24 +174,9 @@ import {
   showToast,
 } from "@/utils/helper";
 import { repairOrder } from "@/api/types/models";
+import { requestUserFinishRepairOrder } from "@/api/repairOrder";
 //维修进度状态
-const stepList = [
-  {
-    title: "待接单",
-  },
-  {
-    title: "进行中",
-  },
-  {
-    title: "待确认",
-  },
-  {
-    title: "已完成",
-  },
-  {
-    title: "已退单",
-  },
-];
+const stepList = ref<Array<object>>([]);
 //显示确认须知
 const showMessage = ref(false);
 //定时关闭
@@ -193,10 +211,6 @@ export default defineComponent({
   },
 
   setup(props) {
-    console.log(
-      "repairDetail prps--->",
-      JSON.parse(decodeURIComponent(props.repairOrder))
-    );
     const handleCopyRepairId = () => {
       showToast("复制成功", "success");
     };
@@ -204,11 +218,24 @@ export default defineComponent({
     const handleCollapseChange = (value: any) => {
       console.log("value", value);
     };
+    //返修
+    const handleRepairBack = () => {
+      //optionType 0表示返修,1表示退单
+      uni.navigateTo({
+        url: `/pages/orderBack/index?id=${currentRepairOrder.value.id};optionType=0`,
+      });
+    };
+    //退单
+    const handleOrderBack = () => {
+      uni.navigateTo({
+        url: `/pages/orderBack/index?id=${currentRepairOrder.value.id};optionType=1`,
+      });
+    };
     //提醒用户
     const handlePushUser = () => {
       showToast("提醒用户成功！", "success");
     };
-    //上传维修图片
+    //用户确认订单完成
     const handleSubmitImage = () => {
       startCountDown();
       showMessage.value = true;
@@ -219,12 +246,39 @@ export default defineComponent({
       handleClearInterval();
     };
     //确认
-    const handleAcceptOrder = () => {
+    const handleAcceptOrder = async () => {
+      let timeout;
       showMessage.value = false;
       handleClearInterval();
-      navigateTo("/pages/uploadRepairImage/index", {
-        id: currentRepairOrder.value.id,
-      });
+      const data = {
+        ...currentRepairOrder.value,
+        repairEquipmentContent: JSON.stringify(
+          currentRepairOrder.value.repairEquipmentContent
+        ),
+        repairImg: JSON.stringify(
+          currentRepairOrder.value.repairEquipmentContent
+        ),
+        orderFlowDate: null,
+        orderFlowDesc: null,
+        orderFlowFinish: null,
+        orderFlowList: null,
+        orderFlowState: null,
+      };
+      console.log("data", data);
+      try {
+        const res = await requestUserFinishRepairOrder(data);
+        console.log("res", res);
+        if (res.data.success) {
+          showToast("订单确认成功", "success");
+          timeout = setTimeout(() => {
+            uni.navigateBack({ delta: 2 });
+          }, 600);
+        }
+      } catch (error) {
+        showToast("error");
+        console.log("error", error);
+      }
+      clearTimeout(timeout);
     };
     //弹窗关闭
     const handleModalClose = () => {
@@ -253,6 +307,8 @@ export default defineComponent({
       }, 1000);
     };
     return {
+      handleRepairBack,
+      handleOrderBack,
       repairLabel,
       currentRepairOrder,
       handleCopyRepairId,
@@ -277,9 +333,27 @@ export default defineComponent({
       "repairDetail options --->",
       JSON.parse(decodeURIComponent(options?.repairOrder))
     );
-    currentRepairOrder.value = JSON.parse(
-      decodeURIComponent(options?.repairOrder)
-    );
+    const data = JSON.parse(decodeURIComponent(options?.repairOrder));
+    let newData = {};
+    if (data.repairEquipmentContent) {
+      newData = {
+        ...data,
+        repairEquipmentContent: JSON.parse(data.repairEquipmentContent),
+        repairImg: JSON.parse(data.repairImg),
+      };
+    }
+    console.log("repairDetail newData", newData);
+    if (newData.orderFlowList) {
+      const tempList: Array<object> = [];
+      newData.orderFlowList.map((item: any) => {
+        tempList.push({
+          title: item.desc,
+          desc: item.time || "N/A",
+        });
+      });
+      stepList.value = tempList;
+    }
+    currentRepairOrder.value = newData;
   },
   beforeUnmount() {
     this.handleClearInterval();
@@ -301,13 +375,9 @@ export default defineComponent({
 .repairDetail {
   .box {
     width: 100vw;
-    // min-height: 100vh;
-    padding: 30rpx;
-    // padding-bottom: 120rpx;
-    overflow: hidden;
+    padding: 40rpx;
     box-sizing: border-box;
     border-radius: 15rpx;
-    // margin-bottom: 100rpx;
     &-title {
       @include flex(column);
       flex-direction: column;
@@ -337,7 +407,7 @@ export default defineComponent({
       }
       &-content {
         flex: 1;
-        height: 130rpx;
+        // height: 130rpx;
         background-color: #ffffff;
         margin-left: 20rpx;
         border-radius: 30rpx;
@@ -358,6 +428,7 @@ export default defineComponent({
     &-orderId {
       @include box;
       @include flex(row);
+      align-items: center;
       justify-content: space-between;
       box-sizing: border-box;
       padding: 30rpx;
@@ -385,9 +456,14 @@ export default defineComponent({
         padding: 30rpx 0 20rpx 30rpx;
       }
       &-steps {
-        // background-color: aqua;
-        padding: 20rpx;
-        box-sizing: border-box;
+        width: 625rpx;
+        overflow: auto;
+        margin: 20rpx auto 0 auto;
+        -webkit-overflow-scrolling: touch; /* 在 iOS 上启用惯性滚动 */
+        &-item {
+          width: 1000rpx;
+          height: 140rpx;
+        }
       }
     }
     &-option {
@@ -460,5 +536,8 @@ export default defineComponent({
       height: 130rpx;
     }
   }
+}
+.box-order-steps::-webkit-scrollbar {
+  width: 200rpx; /* 滚动条的宽度 */
 }
 </style>

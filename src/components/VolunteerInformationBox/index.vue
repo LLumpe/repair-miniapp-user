@@ -36,7 +36,8 @@
           :key="item.id"
           @click="handleNavigateToRepairList(item.id)"
         >
-          <UBadge
+          <image :src="item.icon" class="list-box-image" />
+          <!-- <UBadge
             class="uni-badge-left-margin"
             :text="item.value"
             absolute="rightTop"
@@ -44,7 +45,7 @@
             v-if="status !== 'unlogin'"
           >
             <image :src="item.icon" class="list-box-image" />
-          </UBadge>
+          </UBadge> -->
           <image
             :src="item.icon"
             class="list-box-image"
@@ -57,10 +58,10 @@
     <view class="service">
       <view class="title">
         <span class="title-name">功能服务</span>
-        <view class="title-more">
+        <!-- <view class="title-more">
           查看功能服务
           <text class="iconfont icon-arrow-right" />
-        </view>
+        </view> -->
       </view>
       <view class="content">
         <view class="content-item" @click="handleEditAddress">
@@ -80,15 +81,16 @@ import {
   PropType,
   ref,
   ComputedRef,
+  watch,
 } from "vue";
 import authService from "@/service/authService";
 import dayjs from "@/utils/dayjs";
-import { navigateTo } from "@/utils/helper";
+import { navigateTo, showToast } from "@/utils/helper";
 import UCountTo from "../UCountTo/index.vue";
-import { Case } from "@/api/types/models";
+import { Case, repairOrder } from "@/api/types/models";
 import { requestGetVolunteerCases } from "@/api/mission";
 import { useStore } from "vuex";
-import UBadge from "@/components/UBadge/index.vue";
+import { requestGetAllUserRepairOrder } from "@/api/myRepairOrder";
 
 const useLogin = () => {
   const handleLogin = () => {
@@ -161,9 +163,13 @@ const useLogin = () => {
 //     allMissionsNumber,
 //   };
 // };
-
+const unaccept = ref(0);
+const working = ref(0);
+const finished = ref(0);
+const back = ref(0);
 export default defineComponent({
-  components: { UBadge },
+  name: "VolunteerInformationBox",
+  components: {},
   props: {
     status: {
       type: String as PropType<"unlogin" | "me" | "user">,
@@ -173,15 +179,33 @@ export default defineComponent({
       type: Object,
       default: undefined,
     },
+    userRepairInfo: {
+      type: Object,
+      default: undefined,
+    },
   },
   setup(props) {
-    //获取各个订单数量
-    // const getOrderNumber = (type: "string") => {
-    //   //获取vuex实例
-    //   const store = useStore();
-    //   const repairOrder = store.getters.userRepairOrder;
-    //   console.log("repairOrder", repairOrder);
-    // };
+    //监听props中data的变化
+    watch(
+      props,
+      (newValue: any, oldValue: any) => {
+        if (props.userRepairInfo) {
+          unaccept.value = props.userRepairInfo.filter(
+            (item: any) => item.state === 1
+          ).length;
+          working.value = props.userRepairInfo.filter(
+            (item: any) => item.state === 2
+          ).length;
+          finished.value = props.userRepairInfo.filter(
+            (item: any) => item.state === 4
+          ).length;
+          back.value = props.userRepairInfo.filter(
+            (item: any) => item.state === -10
+          ).length;
+        }
+      },
+      { immediate: true }
+    );
     const name = computed(() => {
       return props.status === "me"
         ? props?.userInfo?.volunteerInformation?.name
@@ -193,7 +217,6 @@ export default defineComponent({
         ? props?.userInfo?.volunteerInformation?.sex
         : props?.userInfo?.sex;
     });
-
     const registerTimeFromNow = computed(() => {
       const time =
         props.status === "me"
@@ -257,28 +280,28 @@ export default defineComponent({
     };
     const orderList = [
       {
-        id: 1,
+        id: 2,
         icon: "../../static/images/user/repairring.png",
         title: "待接单",
-        value: 5,
-      },
-      {
-        id: 2,
-        icon: "../../static/images/user/unconfirmed.png",
-        title: "进行中",
-        value: 2,
+        value: unaccept,
       },
       {
         id: 3,
-        icon: "../../static/images/user/done.png",
-        title: "已完成",
-        value: 3,
+        icon: "../../static/images/user/unconfirmed.png",
+        title: "进行中",
+        value: working,
       },
       {
-        id: 4,
+        id: 5,
+        icon: "../../static/images/user/done.png",
+        title: "已完成",
+        value: finished,
+      },
+      {
+        id: 6,
         icon: "../../static/images/user/cancel.png",
-        title: "退单",
-        value: 1,
+        title: "已售后",
+        value: back,
       },
     ];
     console.log("isLogin?", props.status);
@@ -294,9 +317,11 @@ export default defineComponent({
       handleClickPhone,
       orderList,
       handleNavigateToRepairList,
-      // ...useHistory(props.status, props.userInfo),
       handleMoreRepairOrder,
-      // getOrderNumber,
+      unaccept,
+      working,
+      finished,
+      back,
     };
   },
 });
@@ -426,116 +451,16 @@ export default defineComponent({
       }
     }
   }
-  // .left {
-  //   box-sizing: border-box;
-  //   width: 202rpx;
-  //   padding: 32rpx 32rpx 0 42rpx;
-  //   text-align: center;
-
-  //   .avatar {
-  //     width: 128rpx;
-  //     height: 128rpx;
-  //     border-radius: 100%;
-  //     background-size: cover;
-
-  //     // &--nologin {
-  //     //   background: #666666;
-  //     // }
-  //   }
-
-  //   .tag {
-  //     margin-top: 16rpx;
-  //   }
-  // }
-
-  // .right {
-  //   padding: 52rpx 0 18rpx 0;
-
-  //   .name {
-  //     font-size: $uni-font-size-lg;
-  //     font-weight: $uni-font-weight-bold;
-  //     color: #000000;
-  //     line-height: 44rpx;
-
-  //     .sex-icon {
-  //       display: inline-block;
-  //       margin-left: 10rpx;
-  //       width: 24rpx;
-  //       height: 24rpx;
-  //       background-image: url("@/static/images/profile/man.png");
-  //       background-size: cover;
-
-  //       &-man {
-  //         background-image: url("@/static/images/profile/man.png");
-  //       }
-  //       &-woman {
-  //         background-image: url("@/static/images/profile/woman.png");
-  //       }
-  //     }
-  //   }
-
-  //   .action-btn {
-  //     margin-top: 16rpx;
-  //     padding: 0;
-  //     border-radius: 10rpx;
-  //     border: 2rpx solid #979797;
-  //     color: #000000;
-  //     position: relative;
-  //     display: inline-block;
-  //     background-color: #ffffff;
-
-  //     &-text {
-  //       font-size: 18rpx;
-  //       font-weight: $uni-font-weight-base;
-  //       line-height: 40rpx;
-  //       margin: 0 5rpx 0 15rpx;
-
-  //       .icon-arrow-right {
-  //         vertical-align: middle;
-  //         font-size: 26rpx;
-  //         line-height: 40rpx;
-  //         color: #979797;
-  //       }
-  //     }
-
-  //     &::after {
-  //       border: none;
-  //     }
-  //   }
-  // }
-
   .divider {
     width: 416rpx;
     height: 2rpx;
     background-color: #979797;
     margin: 20rpx 0;
   }
-
-  // .tasks {
-  //   width: 416rpx;
-  //   display: flex;
-
-  //   .task {
-  //     flex-shrink: 1;
-  //     width: 100%;
-
-  //     // &-number {
-  //     //   font-size: 44rpx;
-  //     //   color: #000000;
-  //     //   line-height: 60rpx;
-  //     // }
-  //     &-description {
-  //       font-size: 24rpx;
-  //       color: #000000;
-  //       line-height: 34rpx;
-  //     }
-  //   }
-  // }
 }
 .service {
   margin: 0 auto 20rpx auto;
   width: 700rpx;
-  height: 400rpx;
   background: #ffffff;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   border-radius: 10rpx;
@@ -571,6 +496,7 @@ export default defineComponent({
     align-items: center;
     place-items: center;
     overflow: hidden;
+    padding: 10rpx 0;
     &-item {
       width: 130rpx;
       height: 130rpx;
@@ -597,104 +523,4 @@ export default defineComponent({
     }
   }
 }
-
-// .list {
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   margin-top: 80rpx;
-
-//   &-item {
-//     width: 672rpx;
-//     height: 176rpx;
-//     background: #ffffff;
-//     box-shadow: 0rpx 4rpx 8rpx 0rpx rgba(0, 0, 0, 0.5);
-//     border-radius: 10rpx;
-//     margin-bottom: 48rpx;
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-//     padding: 24rpx 32rpx 24rpx 42rpx;
-//     box-sizing: border-box;
-//     position: relative;
-
-//     &-content {
-//       display: flex;
-
-//       &-photo {
-//         width: 128rpx;
-//         height: 128rpx;
-//         border-radius: 100%;
-//       }
-
-//       &-info {
-//         display: flex;
-//         flex-direction: column;
-//         justify-content: flex-start;
-//         margin-left: 40rpx;
-
-//         &-title {
-//           font-size: 36rpx;
-//           font-weight: 400;
-//           color: #000000;
-//           line-height: 50rpx;
-//           margin-bottom: 14rpx;
-//         }
-
-//         &-desc {
-//           font-size: 20rpx;
-//           font-weight: 400;
-//           color: #303133;
-//           line-height: 28rpx;
-//         }
-//       }
-//     }
-
-//     &-badge {
-//       width: 96rpx;
-//       height: 32rpx;
-//       border-radius: 10rpx 10rpx 10rpx 0rpx;
-//       display: flex;
-//       justify-content: center;
-//       align-items: center;
-//       font-size: 20rpx;
-//       font-weight: 400;
-//       line-height: 28rpx;
-//       position: absolute;
-//       top: 0;
-//       right: 0;
-
-//       &.badge-running {
-//         color: #303133;
-//         background: #ffa36c;
-//       }
-
-//       &.badge-complete {
-//         color: #303133;
-//         background: #799351;
-//       }
-
-//       &.badge-timeout,
-//       &.badge-canceled {
-//         color: #303133;
-//         background: #b0b2b2;
-//       }
-//     }
-
-//     &-icon {
-//       width: 60rpx;
-//       height: 60rpx;
-//       background-size: contain;
-//       background-position: 50% 50%;
-//       background-repeat: no-repeat;
-
-//       &.icon-running {
-//         background-image: url("@/static/images/icon/clock.png");
-//       }
-//       &.icon-complete {
-//         background-image: url("@/static/images/icon/done.png");
-//       }
-//     }
-//   }
-// }
 </style>

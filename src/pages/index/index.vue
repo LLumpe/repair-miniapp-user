@@ -26,21 +26,8 @@ export default defineComponent({
   components: {
     Top,
     Announcement,
-    AllTasks,
-    Status,
-    LeaderBoard,
     Mall,
     Publish,
-  },
-
-  setup() {
-    const gotoMap = () => {
-      navigateTo("/pages/map/index");
-    };
-    return { gotoMap };
-  },
-  onShow() {
-    // store.dispatch(ActionTypes.getCount);
   },
 });
 </script>

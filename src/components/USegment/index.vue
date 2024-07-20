@@ -37,8 +37,8 @@
             : inActiveColor,
         borderBottom:
           index === currentIndex && styleType === 'text'
-            ? `4rpx solid ${activeColor}`
-            : `4rpx solid ${inActiveColor}`,
+            ? `6rpx solid ${activeColor}`
+            : `6rpx solid ${inActiveColor}`,
       }"
       class="segmented-control__item"
       @click="_onClick(index)"
@@ -54,7 +54,7 @@
                 : styleType === 'text'
                 ? '#000'
                 : activeColor,
-            fontSize: index === currentIndex ? '38rpx' : '30rpx',
+            fontSize: index === currentIndex ? '30rpx' : '26rpx',
             fontWeight: index === currentIndex ? '600' : '500',
           }"
           class="segmented-control__text"

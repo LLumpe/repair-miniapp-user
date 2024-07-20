@@ -1,7 +1,10 @@
 <template>
   <view class="Mall">
     <view class="Mall-box">
-      <image src="@/static/images/mall/expecting.png" mode="aspectFill"></image>
+      <image
+        src="@/static/images/mall/expectingMall.png"
+        mode="aspectFill"
+      ></image>
       <title>商城功能敬请期待...</title>
       <svg></svg>
     </view>
@@ -30,15 +33,14 @@ export default defineComponent({
     align-items: center;
     justify-content: center;
     image {
-      height: 600rpx;
+      width: 80%;
       object-fit: fit;
       border-radius: 15rpx;
-      border: 1rpx solid gainsboro;
     }
     title {
       margin-top: 50rpx;
       color: $uni-color-primary;
-      font-size: $uni-font-size-xxl;
+      font-size: $uni-font-size-xl;
       font-weight: 700;
     }
   }

@@ -6,9 +6,10 @@
         <view class="box-edit-item">
           <title>城市</title>
           <view class="box-edit-item-content" @click="handleSelectCity">
-            <view class="box-eidt-item-content-text">{{
+            <!-- <view class="box-eidt-item-content-text">{{
               formData.city || "请选择城市"
-            }}</view>
+            }}</view> -->
+            <input v-model="formData.city" placeholder="请选择城市" disabled />
             <text class="iconfont icon-arrow-right" />
           </view>
         </view>
@@ -16,8 +17,9 @@
           <title>具体地址</title>
           <view class="box-edit-item-content">
             <input
-              placeholder="请填写街道/小区/办公楼"
               v-model="formData.address"
+              placeholder="请填写街道/小区/办公楼"
+              class="box-edit-item-content-input"
             />
             <image
               src="@/static/images/address/location.png"
@@ -28,7 +30,11 @@
         <view class="box-edit-item">
           <title>联系人</title>
           <view class="box-edit-item-content">
-            <input placeholder="请填写联系人" v-model="formData.name" />
+            <input
+              placeholder="请填写联系人"
+              v-model="formData.name"
+              class="box-edit-item-content-input"
+            />
           </view>
         </view>
         <view class="box-edit-item">
@@ -38,7 +44,25 @@
               placeholder="请填写手机号码"
               v-model="formData.phone"
               style="color: #09c46e"
+              class="box-edit-item-content-input"
             />
+          </view>
+          <span @click="getUserPhone" style="font-size: 26rpx; color: gray"
+            >自动填充</span
+          >
+        </view>
+        <view class="box-edit-item">
+          <view
+            class="box-edit-item-content"
+            style="justify-content: flex-start"
+          >
+            <checkbox-group @change="handleDefaultChange">
+              <checkbox
+                value="isDefault"
+                color="#09C46E"
+                style="transform: scale(0.7)"
+              />是否设为默认地址</checkbox-group
+            >
           </view>
         </view>
         <view class="box-edit-button">
@@ -56,6 +80,7 @@ import {
   hideLoading,
   navigateBack,
   showLoading,
+  showModal,
   showToast,
 } from "@/utils/helper";
 const citySelector = requirePlugin("citySelector");
@@ -63,6 +88,7 @@ const chooseLocation = requirePlugin("chooseLocation");
 import mapSettings from "@/config/map";
 import { useLocation } from "@/uses/useLocation";
 import { requestAddUserAddress, requestEditUserAddress } from "@/api/address";
+import { useStore } from "vuex";
 //当前位置
 // const currentLocation = reactive({ latitude: 0, longitude: 0 });
 //获取位置信息
@@ -94,6 +120,7 @@ const formData = reactive({
   address: "",
   name: "",
   phone: "",
+  isDefault: 0, //1表示默认，0表示不是默认，默认为0
   latitude: 0,
   longitude: 0,
 });
@@ -102,6 +129,10 @@ export default defineComponent({
   name: "CreateAddress",
   components: {},
   setup(props) {
+    const store = useStore();
+    const getUserPhone = () => {
+      formData.phone = store.getters.userInfo.phone;
+    };
     const handleSubmit = async () => {
       showLoading("提交中");
       try {
@@ -117,6 +148,9 @@ export default defineComponent({
         showToast("提交事变");
         console.log("error", error);
       }
+    };
+    const handleDefaultChange = (e: any) => {
+      formData.isDefault = e.detail.value.includes("isDefault") ? 1 : 0;
     };
     const handleSelectCity = () => {
       let key = mapSettings.key; //使用在腾讯位置服务申请的key
@@ -155,6 +189,8 @@ export default defineComponent({
       });
     };
     return {
+      handleDefaultChange,
+      getUserPhone,
       handleSubmit,
       handleSelectCity,
       formData,
@@ -171,7 +207,7 @@ export default defineComponent({
       formData.city = selectedCity.fullname;
     }
     if (location) {
-      formData.province = location.province; //省
+      formData.province = location.province || location.city; //省
       formData.city = location.city; //市
       formData.district = location.district; //区
       formData.address = location.address; // 详细地址
@@ -222,9 +258,9 @@ export default defineComponent({
         padding: 20rpx 0;
         title {
           width: 160rpx;
-          font-weight: 600;
           letter-spacing: 2rpx;
-          font-size: $uni-font-size-lg;
+          font-size: $uni-font-size-base;
+          color: $uni-text-color-grey;
         }
         &-content {
           margin-left: 20rpx;
@@ -234,16 +270,16 @@ export default defineComponent({
           align-items: center;
           justify-content: space-between;
           font-size: $uni-font-size-base;
-          color: $uni-text-color-grey;
-          input {
+          &-input {
             display: flex;
-            font-size: $uni-font-size-base;
-            color: $uni-text-color-grey;
             overflow: auto;
           }
           image {
             width: 50rpx;
             height: 50rpx;
+          }
+          &-text {
+            color: $uni-text-color-grey;
           }
         }
       }

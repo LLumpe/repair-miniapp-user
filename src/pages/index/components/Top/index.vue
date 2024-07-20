@@ -96,7 +96,6 @@ export default defineComponent({
   height: 320rpx;
   border-radius: 20rpx;
   overflow: hidden;
-  box-shadow: 0rpx 4rpx 8rpx 0rpx rgba(0, 0, 0, 0.3);
   border: 1rpx solid rgba(0, 0, 0, 0.2);
   &-item {
     width: 672rpx;

@@ -31,12 +31,6 @@
       }
     },
     {
-      "path": "pages/uploadRepairImage/index",
-      "style": {
-        "navigationBarTitleText": "设备维修照片上传"
-      }
-    },
-    {
       "path": "pages/publishOrder/index",
       "style": {
         "navigationBarTitleText": "发布维修订单",
@@ -52,11 +46,16 @@
         "navigationBarTextStyle": "white"
       }
     },
-
     {
       "path": "pages/orderDetail/index",
       "style": {
         "navigationBarTitleText": "确认维修订单"
+      }
+    },
+    {
+      "path": "pages/orderBack/index",
+      "style": {
+        "navigationBarTitleText": "售后"
       }
     },
     {
@@ -79,12 +78,6 @@
       }
     },
     {
-      "path": "pages/test/index",
-      "style": {
-        "navigationBarTitleText": "测试页"
-      }
-    },
-    {
       "path": "pages/register/index",
       "style": {
         "navigationBarTitleText": "完善个人信息"
@@ -94,13 +87,6 @@
       "path": "pages/editProfile/index",
       "style": {
         "navigationBarTitleText": "修改个人信息"
-      }
-    },
-    {
-      "path": "pages/leaderBoard/index",
-      "style": {
-        "navigationBarTitleText": "排行榜",
-        "navigationStyle": "custom"
       }
     },
     {
@@ -123,35 +109,9 @@
       }
     },
     {
-      "path": "pages/volunteerList/index",
-      "style": {
-        "navigationBarTitleText": "志愿者列表",
-        "navigationBarBackgroundColor": "#A20A0A",
-        "navigationBarTextStyle": "white"
-      }
-    },
-    {
-      "path": "pages/missionInformation/index",
-      "style": {
-        "navigationBarTitleText": "维修订单详情"
-      }
-    },
-    {
       "path": "pages/volunteerInformation/index",
       "style": {
         "navigationBarTitleText": "详细信息"
-      }
-    },
-    {
-      "path": "pages/myMissions/index",
-      "style": {
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/mission/index",
-      "style": {
-        "navigationBarTitleText": "寻人"
       }
     },
     {
@@ -159,17 +119,21 @@
       "style": {
         "navigationBarTitleText": "设置订阅"
       }
+    }
+  ],
+  "subPackage": [
+    {
+      "root": "pagesPackage/missionPackage",
+      "pages": []
     },
     {
-      "path": "pages/tips/index",
-      "style": {
-        "navigationBarTitleText": "救援流程"
-      }
+      "root": "pagesPackage/mallPackage",
+      "pages": []
     }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "归家行动志愿者端",
+    "navigationBarTitleText": "高阳中捷维修接单",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#f0f2f5"
   },
@@ -234,11 +198,6 @@
       {
         "name": "志愿者列表",
         "path": "pages/volunteerList/index",
-        "query": ""
-      },
-      {
-        "name": "排行榜",
-        "path": "pages/leaderBoard/index",
         "query": ""
       },
       {

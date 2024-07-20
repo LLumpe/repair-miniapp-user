@@ -170,6 +170,12 @@ export default {
       },
     }, // 数据
   },
+  setup(props) {
+    console.log("usteps Props", props);
+    console.log("usteps Props", props.activeIcon);
+    console.log("usteps Props", props.options);
+    return {};
+  },
   data() {
     return {
       heightArr: [],

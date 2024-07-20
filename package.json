@@ -69,7 +69,6 @@
     "regenerator-runtime": "^0.12.1",
     "tim-upload-plugin": "^1.0.1",
     "tim-wx-sdk": "^2.9.3",
-    "uview-ui": "^1.8.8",
     "vant": "^2.13.2",
     "vue": "^3.0.0",
     "vue-class-component": "^6.3.2",
