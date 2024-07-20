@@ -3,12 +3,12 @@
     <view class="box">
       <view class="box-form">
         <view class="box-form-item">
-          <title class="box-form-item-title">退单/返修描述</title>
+          <title class="box-form-item-title">{{ context }}描述</title>
           <view label="图片描述" class="box-form-item-desc">
             <textarea
-              v-model="formData.desc"
+              v-model="formData.afterSaleDesc"
               type="textArea"
-              placeholder="请输入返修/退单的理由"
+              :placeholder="`请输入${context}的理由`"
               :maxlength="50"
             />
           </view>
@@ -22,17 +22,19 @@
 </template>
 
 <script lang="ts">
-import { reactive, defineComponent } from "vue";
+import { reactive, defineComponent, computed, ref, onUnmounted } from "vue";
 import {
   hideLoading,
-  showLoading,
+  navigateBack,
   showModalError,
   showToast,
 } from "@/utils/helper";
+import { requestOrderBack, requestOrderRepair } from "@/api/repairOrder";
 export interface formType {
   id: string;
-  desc: string; //退单原因
+  afterSaleDesc: string; //退单原因
 }
+const timeout = ref<number | null>(null);
 export default defineComponent({
   name: "UploadRepairImage",
   props: {
@@ -40,21 +42,44 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    type: {
+      type: Number,
+      default: 0, //0表示返修,1表示退单
+    },
   },
-  setup() {
+  setup(props) {
     const formData = reactive<formType>({
-      id: "",
-      desc: "",
+      id: props.id,
+      afterSaleDesc: "",
     });
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
       try {
+        console.log("orderBack_formData", formData);
+        const res = await (props.type === 1
+          ? requestOrderBack(formData)
+          : requestOrderRepair(formData));
+        console.log("res", res);
+        if (res) {
+          showToast("提交售后成功", "success");
+          timeout.value = setTimeout(() => {
+            navigateBack(2);
+          }, 600);
+        }
       } catch (error) {
         console.log(error);
         hideLoading();
         showModalError("提交失败");
       }
     };
+    const context = computed(() => {
+      return props.type === 0 ? "返修" : "退单";
+    });
+    onUnmounted(() => {
+      clearTimeout(timeout.value);
+    });
     return {
+      timeout,
+      context,
       formData,
       handleSubmit,
     };

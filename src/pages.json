@@ -68,7 +68,8 @@
       "path": "pages/repairList/index",
       "style": {
         "navigationBarTitleText": "我的订单",
-        "navigationBarBackgroundColor": "#ffffff"
+        "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": true
       }
     },
     {

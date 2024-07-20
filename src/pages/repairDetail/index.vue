@@ -1,38 +1,16 @@
 <template>
   <view class="repairDetail">
     <view class="box">
-      <view class="box-title" v-if="currentRepairOrder.state === 0">
-        <h1>待审核</h1>
-        <h2>订单正在审核中，请您耐心等待~</h2>
-      </view>
-      <view class="box-title" v-if="currentRepairOrder.state === 1">
-        <h1>待接单</h1>
-        <h2>订单正在等待师傅接单，祝您生活愉快~</h2>
-      </view>
-      <view class="box-title" v-if="currentRepairOrder.state === 2">
-        <h1>进行中</h1>
-        <h2>订单正在进行中，祝您生活愉快~</h2>
-      </view>
-      <view class="box-title" v-if="currentRepairOrder.state === 3">
-        <h1>待确认</h1>
-        <h2>订单已维修完毕，请您确认~</h2>
-      </view>
-      <view class="box-title" v-if="currentRepairOrder.state === 4">
-        <h1>已完成</h1>
-        <h2>订单已经完成，祝您生活愉快~</h2>
-      </view>
-      <view class="box-title" v-if="currentRepairOrder.state === -10">
-        <h1>已售后</h1>
-        <h2>订单已经售后，祝您生活愉快~</h2>
-      </view>
-      <view class="box-title" v-if="currentRepairOrder.state === -20">
-        <h1>已终止</h1>
-        <h2>订单已经终止，祝您生活愉快~</h2>
-      </view>
-      <view class="box-notice">
-        <view class="box-notice-image">
+      <view class="box-title">
+        <view>
+          <h1>{{ orderLabel[currentRepairOrder.state].title }}</h1>
+          <h2>{{ orderLabel[currentRepairOrder.state].content }}</h2>
+        </view>
+        <view class="box-image">
           <image src="@/static/images/repairDetail/repairMan.png" />
         </view>
+      </view>
+      <!-- <view class="box-notice">
         <view class="box-notice-content">
           <span v-if="currentRepairOrder.state === 1">
             HI!~订单正在等待师傅接单，请您耐心等待!
@@ -54,15 +32,15 @@
           </span>
         </view>
         <RepairDetailNotice />
-      </view>
+      </view> -->
       <view class="box-orderId">
         <span class="box-orderId-content">
-          订单号：1020240706143145142099
+          订单号：{{ currentRepairOrder.orderNumber || "N/A" }}
         </span>
         <view style="color: #09c46e" @click="handleCopyRepairId">复制</view>
       </view>
       <view class="box-order">
-        <view class="box-order-title"> 订单详情：</view>
+        <view class="box-order-title"> 订单状态：</view>
         <view class="box-order-content">
           <view class="box-order-steps">
             <view class="box-order-steps-item">
@@ -73,19 +51,38 @@
               />
             </view>
           </view>
+        </view>
+      </view>
+      <view class="box-order">
+        <view class="box-order-title"> 订单详情：</view>
+        <view class="box-order-content">
           <RepairOrderDetailInfo :orderDetail="currentRepairOrder" />
         </view>
       </view>
       <view v-if="currentRepairOrder.state !== 1" class="box-order">
-        <view class="box-order-title"> 维修记录：</view>
+        <view class="box-order-title">
+          {{ currentRepairOrder.state === 2 ? "接单师傅：" : "维修记录：" }}
+        </view>
         <view class="box-order-content">
           <RepairOrderWorkerInfo :orderDetail="currentRepairOrder" />
         </view>
       </view>
-
-      <view class="block" />
-
-      <view class="box-option">
+      <view
+        v-if="
+          currentRepairOrder.state !== 2 &&
+          currentRepairOrder.state !== -10 &&
+          currentRepairOrder.state !== -20
+        "
+        class="block"
+      />
+      <view
+        v-if="
+          currentRepairOrder.state !== 2 &&
+          currentRepairOrder.state !== -10 &&
+          currentRepairOrder.state !== -20
+        "
+        class="box-option"
+      >
         <view
           v-if="
             currentRepairOrder.state === 0 || currentRepairOrder.state === 1
@@ -159,20 +156,19 @@
 </template>
 
 <script lang="ts">
-import { ref, Ref, reactive, defineComponent, onMounted } from "vue";
+import {
+  ref,
+  Ref,
+  defineComponent,
+  onMounted,
+  onUnmounted,
+  reactive,
+} from "vue";
 import USteps from "@/components/USteps/index.vue";
 import RepairOrderDetailInfo from "./components/repairOrderDetailInfo/index.vue";
 import RepairOrderWorkerInfo from "./components/repairOrderWorkerInfo/index.vue";
-import UCollapse from "@/components/UCollapse/index.vue";
-import UCollapseItem from "@/components/UCollapseItem/index.vue";
 import UPopup from "@/components/UPopup/index.vue";
-import {
-  hideLoading,
-  navigateTo,
-  showLoading,
-  showModalError,
-  showToast,
-} from "@/utils/helper";
+import { navigateBack, navigateTo, showToast } from "@/utils/helper";
 import { repairOrder } from "@/api/types/models";
 import { requestUserFinishRepairOrder } from "@/api/repairOrder";
 //维修进度状态
@@ -181,6 +177,8 @@ const stepList = ref<Array<object>>([]);
 const showMessage = ref(false);
 //定时关闭
 let timeout = ref<number | null>(null);
+//定时跳转
+let timenav = ref<number | null>(null);
 //设置关闭秒数
 const count = ref<number>(7);
 //显示关闭
@@ -193,6 +191,62 @@ const repairLabel = {
   "3": "订单待确认",
   "4": "订单已完成",
   "4-4": "订单已退单",
+};
+//订单状态描述
+const orderLabel = {
+  "0": {
+    title: "待审核",
+    content: "订单正在审核中，请您耐心等待~",
+  },
+  "1": {
+    title: "待接单",
+    content: "订单正在等待师傅接单，祝您生活愉快~",
+  },
+  "2": {
+    title: "进行中",
+    content: "订单正在进行中，祝您生活愉快~",
+  },
+  "3": {
+    title: "待确认",
+    content: "订单已维修完毕，请您确认~",
+  },
+  "4": {
+    title: "已完成",
+    content: "订单已经完成，祝您生活愉快~",
+  },
+
+  "-1": {
+    title: "已取消",
+    content: "订单已取消，祝您生活愉快~",
+  },
+  "-2": {
+    title: "审核不通过",
+    content: "订单售后审核被驳回，请您咨询客户或重新提交~",
+  },
+  "-3": {
+    title: "退单申请中",
+    content: "订单退单申请中，请您耐心等待~",
+  },
+  "-4": {
+    title: "退单审核不通过",
+    content: "订单退单审核被驳回，请您咨询客户或重新提交~",
+  },
+  "-5": {
+    title: "已退单",
+    content: "订单已退单，祝您生活愉快~",
+  },
+  "-6": {
+    title: "返修申请中",
+    content: "订单返修申请中，请您耐心等待~",
+  },
+  "-7": {
+    title: "返修审核不通过",
+    content: "订单返修审核被驳回，请您咨询客户或重新提交~",
+  },
+  "-8": {
+    title: "已返修",
+    content: "订单已返修，祝您生活愉快~",
+  },
 };
 const currentRepairOrder: Ref<repairOrder | null> = ref(null);
 export default defineComponent({
@@ -220,15 +274,17 @@ export default defineComponent({
     };
     //返修
     const handleRepairBack = () => {
-      //optionType 0表示返修,1表示退单
-      uni.navigateTo({
-        url: `/pages/orderBack/index?id=${currentRepairOrder.value.id};optionType=0`,
+      //type 0表示返修,1表示退单
+      navigateTo("/pages/orderBack/index", {
+        id: currentRepairOrder.value.id,
+        type: 0,
       });
     };
     //退单
     const handleOrderBack = () => {
-      uni.navigateTo({
-        url: `/pages/orderBack/index?id=${currentRepairOrder.value.id};optionType=1`,
+      navigateTo("/pages/orderBack/index", {
+        id: currentRepairOrder.value.id,
+        type: 1,
       });
     };
     //提醒用户
@@ -243,13 +299,12 @@ export default defineComponent({
     //取消
     const handleCancelOrder = () => {
       showMessage.value = false;
-      handleClearInterval();
+      clearInterval(timeout.value);
     };
     //确认
     const handleAcceptOrder = async () => {
-      let timeout;
       showMessage.value = false;
-      handleClearInterval();
+      clearInterval(timeout.value);
       const data = {
         ...currentRepairOrder.value,
         repairEquipmentContent: JSON.stringify(
@@ -270,21 +325,17 @@ export default defineComponent({
         console.log("res", res);
         if (res.data.success) {
           showToast("订单确认成功", "success");
-          timeout = setTimeout(() => {
-            uni.navigateBack({ delta: 2 });
+          timenav.value = setTimeout(() => {
+            navigateBack();
           }, 600);
         }
       } catch (error) {
         showToast("error");
         console.log("error", error);
       }
-      clearTimeout(timeout);
     };
     //弹窗关闭
     const handleModalClose = () => {
-      handleClearInterval();
-    };
-    const handleClearInterval = () => {
       clearInterval(timeout.value);
     };
     const startCountDown = () => {
@@ -302,11 +353,18 @@ export default defineComponent({
           count.value--;
         } else {
           showMessage.value = false;
-          handleClearInterval();
+          clearInterval(timeout.value);
         }
       }, 1000);
     };
+    onUnmounted(() => {
+      if (timeout.value) {
+        clearInterval(timeout.value);
+        clearInterval(timenav.value);
+      }
+    });
     return {
+      orderLabel,
       handleRepairBack,
       handleOrderBack,
       repairLabel,
@@ -319,8 +377,8 @@ export default defineComponent({
       showMessage,
       handlePushUser,
       timeout,
+      timenav,
       handleCancelOrder,
-      handleClearInterval,
       handleModalClose,
       count,
       startCountDown,
@@ -348,15 +406,12 @@ export default defineComponent({
       newData.orderFlowList.map((item: any) => {
         tempList.push({
           title: item.desc,
-          desc: item.time || "N/A",
+          desc: item.time || "",
         });
       });
       stepList.value = tempList;
     }
     currentRepairOrder.value = newData;
-  },
-  beforeUnmount() {
-    this.handleClearInterval();
   },
 });
 </script>
@@ -379,10 +434,11 @@ export default defineComponent({
     box-sizing: border-box;
     border-radius: 15rpx;
     &-title {
-      @include flex(column);
-      flex-direction: column;
-      height: 150rpx;
+      @include flex(row);
+      height: 170rpx;
+      width: 100%;
       justify-content: space-around;
+      align-items: center;
       h1 {
         font-size: $uni-font-size-xxl;
       }
@@ -390,28 +446,29 @@ export default defineComponent({
         font-size: $uni-font-size-lg;
       }
     }
+    &-image {
+      width: 130rpx;
+      height: 130rpx;
+      border-radius: 50%;
+      overflow: hidden;
+      image {
+        width: 130rpx;
+        height: 130rpx;
+      }
+    }
     &-notice {
       width: 100%;
       height: 200rpx;
       @include flex;
       align-items: center;
-      &-image {
-        width: 130rpx;
-        height: 130rpx;
-        border-radius: 50%;
-        overflow: hidden;
-        image {
-          width: 130rpx;
-          height: 130rpx;
-        }
-      }
+
       &-content {
         flex: 1;
         // height: 130rpx;
         background-color: #ffffff;
         margin-left: 20rpx;
         border-radius: 30rpx;
-        padding: 10rpx;
+        padding: 20rpx;
         box-sizing: border-box;
         display: flex;
         align-items: center;

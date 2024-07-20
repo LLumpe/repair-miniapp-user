@@ -35,10 +35,10 @@
           styleType === 'button'
             ? activeColor
             : inActiveColor,
-        borderBottom:
-          index === currentIndex && styleType === 'text'
-            ? `6rpx solid ${activeColor}`
-            : `6rpx solid ${inActiveColor}`,
+        // borderBottom:
+        //   index === currentIndex && styleType === 'text'
+        //     ? `6rpx solid ${activeColor}`
+        //     : `6rpx solid ${inActiveColor}`,
       }"
       class="segmented-control__item"
       @click="_onClick(index)"
@@ -148,7 +148,7 @@ export default {
   box-sizing: border-box;
   /* #endif */
   flex-direction: row;
-  height: 36px;
+  height: 80rpx;
   overflow: hidden;
   /* #ifdef H5 */
   cursor: pointer;

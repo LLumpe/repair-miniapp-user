@@ -100,10 +100,6 @@ const useLogin = () => {
     if (type === 1) {
     }
   };
-  // const myInfo = computed(() => {
-  //   const store = useStore();
-  //   return store.getters.userInfo;
-  // });
   const handleEditAddress = () => {
     uni.navigateTo({
       url: "/pages/address/index",
@@ -111,62 +107,6 @@ const useLogin = () => {
   };
   return { handleLogin, handleClickItem, handleEditAddress };
 };
-
-// const useHistory = (status: "unlogin" | "me" | "user", info: any) => {
-//   const store = useStore();
-//   let userHistoryMissions: Ref<Array<Case>> = ref([]);
-
-//   const getHistoryMissions = async () => {
-//     if (status === "user" && (!info.volunteer || !info.volunteer.id)) return;
-
-//     try {
-//       const res = await requestGetVolunteerCases({
-//         volunteerId: info.volunteer.id,
-//       });
-//       if (res.data.data) {
-//         userHistoryMissions.value = res.data.data;
-//       }
-//       console.debug(res);
-//     } catch (e) {
-//       console.log(e);
-//     }
-//   };
-
-//   if (status === "user") {
-//     getHistoryMissions();
-//   }
-
-//   const historyMissions: ComputedRef<Array<Case>> = computed(() => {
-//     return status === "me"
-//       ? store.getters.myAllMissions.reverse()
-//       : userHistoryMissions.value.reverse();
-//   });
-
-//   const doingMissionsNumber = computed(() => {
-//     return historyMissions.value.filter((item) => item.state === 1).length;
-//   });
-
-//   const endedMissionsNumber = computed(() => {
-//     return historyMissions.value.filter(
-//       (item) => item.state === 2 || item.state === 3
-//     ).length;
-//   });
-
-//   const allMissionsNumber = computed(() => {
-//     return historyMissions.value.length;
-//   });
-
-//   return {
-//     historyMissions,
-//     doingMissionsNumber,
-//     endedMissionsNumber,
-//     allMissionsNumber,
-//   };
-// };
-const unaccept = ref(0);
-const working = ref(0);
-const finished = ref(0);
-const back = ref(0);
 export default defineComponent({
   name: "VolunteerInformationBox",
   components: {},
@@ -185,27 +125,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    //监听props中data的变化
-    watch(
-      props,
-      (newValue: any, oldValue: any) => {
-        if (props.userRepairInfo) {
-          unaccept.value = props.userRepairInfo.filter(
-            (item: any) => item.state === 1
-          ).length;
-          working.value = props.userRepairInfo.filter(
-            (item: any) => item.state === 2
-          ).length;
-          finished.value = props.userRepairInfo.filter(
-            (item: any) => item.state === 4
-          ).length;
-          back.value = props.userRepairInfo.filter(
-            (item: any) => item.state === -10
-          ).length;
-        }
-      },
-      { immediate: true }
-    );
     const name = computed(() => {
       return props.status === "me"
         ? props?.userInfo?.volunteerInformation?.name
@@ -262,9 +181,10 @@ export default defineComponent({
       if (props.status === "unlogin") {
         authService.login(true);
       } else {
-        uni.navigateTo({
-          url: `/pages/repairList/index?pageIndex=${index}`,
-        });
+        // uni.navigateTo({
+        //   url: `/pages/repairList/index?pageIndex=${index}`,
+        // });
+        navigateTo("/pages/repairList/index", { pageIndex: index });
       }
     };
     //查看更多订单
@@ -273,9 +193,10 @@ export default defineComponent({
       if (props.status === "unlogin") {
         authService.login(true);
       } else {
-        uni.navigateTo({
-          url: `/pages/repairList/index?pageIndex=0`,
-        });
+        navigateTo("/pages/repairList/index", { pageIndex: 0 });
+        // uni.navigateTo({
+        //   url: `/pages/repairList/index`,
+        // });
       }
     };
     const orderList = [
@@ -283,25 +204,21 @@ export default defineComponent({
         id: 2,
         icon: "../../static/images/user/repairring.png",
         title: "待接单",
-        value: unaccept,
       },
       {
         id: 3,
         icon: "../../static/images/user/unconfirmed.png",
         title: "进行中",
-        value: working,
       },
       {
         id: 5,
         icon: "../../static/images/user/done.png",
         title: "已完成",
-        value: finished,
       },
       {
         id: 6,
         icon: "../../static/images/user/cancel.png",
         title: "已售后",
-        value: back,
       },
     ];
     console.log("isLogin?", props.status);
@@ -318,10 +235,6 @@ export default defineComponent({
       orderList,
       handleNavigateToRepairList,
       handleMoreRepairOrder,
-      unaccept,
-      working,
-      finished,
-      back,
     };
   },
 });

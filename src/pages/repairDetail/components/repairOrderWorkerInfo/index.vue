@@ -236,14 +236,13 @@ export default defineComponent({
   width: 100%;
   background-color: #ffffff;
   border-radius: 20rpx;
-
   .box {
     width: 100%;
     border-radius: 15rpx;
+    padding: 20rpx 40rpx 40rpx 40rpx;
     &-info {
       width: 100%;
       height: fit-content;
-
       &-user {
         width: 100%;
         @include flex;
@@ -251,7 +250,6 @@ export default defineComponent({
         position: relative;
         align-items: center;
       }
-
       &-item {
         margin-top: 20rpx;
         width: 100%;

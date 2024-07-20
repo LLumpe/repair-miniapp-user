@@ -71,3 +71,33 @@ export const requestUserFinishRepairOrder = (data: any) => {
     custom: { noAuth: true },
   });
 };
+
+/**
+ * 用户申请退单
+ *
+ * @return {*}
+ */
+export const requestOrderBack = (data: any) => {
+  return http.request({
+    url: `api/repairOrder/back`,
+    method: "POST",
+    data: data,
+    params: {},
+    custom: { noAuth: true },
+  });
+};
+
+/**
+ * 用户申请返修
+ *
+ * @return {*}
+ */
+export const requestOrderRepair = (data: any) => {
+  return http.request({
+    url: `api/repairOrder/again`,
+    method: "POST",
+    data: data,
+    params: {},
+    custom: { noAuth: true },
+  });
+};

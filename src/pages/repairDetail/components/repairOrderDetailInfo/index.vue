@@ -282,8 +282,7 @@ export default defineComponent({
   .box {
     width: 100%;
     border-radius: 15rpx;
-    padding: none;
-    padding: 0 40rpx 40rpx 40rpx;
+    padding: 20rpx 40rpx 40rpx 40rpx;
     &-info {
       width: 100%;
       height: fit-content;

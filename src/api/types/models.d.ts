@@ -497,7 +497,7 @@ export interface repairOrder {
   orderType?: number | null;
   cancelNumber?: number | null;
   creatorType?: number | null;
-  state?: number | null;
+  state: number;
   createdAt?: string | null;
   checkAt?: string | null;
   receiveAt?: string | null;

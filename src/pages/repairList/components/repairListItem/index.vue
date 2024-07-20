@@ -40,16 +40,15 @@
         </view>
       </view>
     </view>
-    <Empty v-if="!repairOrderList.length" message="暂无订单信息" />
+    <view class="empty">
+      <Empty v-if="!repairOrderList.length" message="暂无订单信息" />
+    </view>
   </view>
 </template>
 
 <script lang="ts">
-import { requestGetAllUserRepairOrder } from "@/api/myRepairOrder";
-import { repairOrder } from "@/api/types/models";
 import { RepairOrder } from "@/store/types";
-import { showToast } from "@/utils/helper";
-import { defineComponent, ref, Ref } from "vue";
+import { computed, defineComponent, ref, Ref } from "vue";
 
 //维修标签状态
 const repairLabel = {
@@ -69,12 +68,12 @@ const repairLabel = {
   "-10": "已售后",
   "-20": "已终止",
 };
-const repairOrderList: Ref<Array<repairOrder>> = ref([]);
 import Empty from "@/components/Empty/index.vue";
+import { useStore } from "vuex";
+import { repairOrder } from "@/api/types/models";
 export default defineComponent({
   name: "RepairListItem",
   components: { Empty },
-  onLoad() {},
   props: {
     pageIndex: {
       type: Number,
@@ -82,6 +81,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const store = useStore();
     //跳转页面事件
     const handleShowMoreRepairOrder = (item: RepairOrder) => {
       console.log("item", item);
@@ -91,34 +91,18 @@ export default defineComponent({
           encodeURIComponent(JSON.stringify(item)),
       });
     };
-    console.log("组件渲染");
-    const getRepairListItemData = async () => {
-      try {
-        console.log("pageIndex", props.pageIndex);
-        if (props.pageIndex === 5) {
-          const res = await requestGetAllUserRepairOrder();
-          if (res.data.result) {
-            console.log("res.data.result.records", res.data.result.records);
-            repairOrderList.value = res.data.result.records;
-          }
-        } else {
-          const res = await requestGetAllUserRepairOrder({
-            state: props.pageIndex,
-          });
-          if (res.data.result) {
-            console.log("res.data.result.records", res.data.result.records);
-            repairOrderList.value = res.data.result.records;
-          }
-        }
-      } catch (error) {
-        showToast("error");
-      }
-      return {
-        repairOrderList,
-      };
-    };
+    const repairOrderList = computed(() => {
+      return store.getters.userRepairOrder.filter((item: repairOrder) =>
+        props.pageIndex === 5
+          ? item
+          : props.pageIndex === -10
+          ? item.state >= -8 && item.state <= -3
+          : props.pageIndex === -20
+          ? item.state >= -2 && item.state <= -1
+          : item.state === props.pageIndex
+      );
+    });
     return {
-      ...getRepairListItemData(),
       repairOrderList,
       repairLabel,
       handleShowMoreRepairOrder,
@@ -135,6 +119,7 @@ export default defineComponent({
 .repairListItem {
   .box {
     width: 100%;
+    margin-top: 100rpx;
     overflow: hidden;
     &-list {
       width: 700rpx;
@@ -221,11 +206,14 @@ export default defineComponent({
               text-overflow: ellipsis; /* 超出部分显示省略号 */
             }
           }
-          &-number {
-          }
         }
       }
     }
+  }
+  .empty {
+    width: 100%;
+    margin-top: 100rpx;
+    overflow: hidden;
   }
 }
 </style>
