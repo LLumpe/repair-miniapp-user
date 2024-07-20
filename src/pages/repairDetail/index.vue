@@ -10,29 +10,6 @@
           <image src="@/static/images/repairDetail/repairMan.png" />
         </view>
       </view>
-      <!-- <view class="box-notice">
-        <view class="box-notice-content">
-          <span v-if="currentRepairOrder.state === 1">
-            HI!~订单正在等待师傅接单，请您耐心等待!
-          </span>
-          <span v-if="currentRepairOrder.state === 2">
-            HI!~订单正在进行中，请您耐心等待师傅完成维修!
-          </span>
-          <span v-if="currentRepairOrder.state === 3">
-            HI!~订单已由维修师傅完成，请您确认!
-          </span>
-          <span v-if="currentRepairOrder.state === 4">
-            HI!~订单已经完成，感谢您选择我们的服务!
-          </span>
-          <span v-if="currentRepairOrder.state === -10">
-            HI!~订单已经售后，感谢您选择我们的服务!
-          </span>
-          <span v-if="currentRepairOrder.state === -20">
-            HI!~订单已经终止，感谢您选择我们的服务!
-          </span>
-        </view>
-        <RepairDetailNotice />
-      </view> -->
       <view class="box-orderId">
         <span class="box-orderId-content">
           订单号：{{ currentRepairOrder.orderNumber || "N/A" }}
@@ -71,7 +48,7 @@
         v-if="
           currentRepairOrder.state !== 2 &&
           currentRepairOrder.state !== -10 &&
-          currentRepairOrder.state !== -20
+          currentRepairOrder.state >= 0
         "
         class="block"
       />
@@ -79,7 +56,7 @@
         v-if="
           currentRepairOrder.state !== 2 &&
           currentRepairOrder.state !== -10 &&
-          currentRepairOrder.state !== -20
+          currentRepairOrder.state >= 0
         "
         class="box-option"
       >
