@@ -577,8 +577,8 @@ export default defineComponent({
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch; /* 在 iOS 上启用惯性滚动 */
         &-item {
-          padding: 0 20rpx;
           width: 1200rpx;
+          margin: 0 0 30rpx 0;
         }
       }
     }
@@ -654,6 +654,6 @@ export default defineComponent({
   }
 }
 .box-order-steps::-webkit-scrollbar {
-  width: 100%; /* 滚动条的宽度 */
+  height: 0rpx; /* 滚动条的宽度 */
 }
 </style>
