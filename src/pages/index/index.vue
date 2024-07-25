@@ -13,14 +13,8 @@
 import { defineComponent } from "vue";
 import Top from "./components/Top/index.vue";
 import Announcement from "./components/Announcement/index.vue";
-import AllTasks from "./components/AllTasks/index.vue";
 import Mall from "./components/Mall/index.vue";
 import Publish from "./components/Publish/index.vue";
-import LeaderBoard from "./components/Leaderboard/index.vue";
-import Status from "./components/Status/index.vue";
-import store from "@/store";
-import { ActionTypes } from "@/enums/actionTypes";
-import { navigateTo } from "@/utils/helper";
 
 export default defineComponent({
   components: {

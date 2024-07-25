@@ -24,7 +24,7 @@ export const requestGetCode = (api: string, params: { phone: string }) => {
  * @return {*}
  */
 export const requestUploadImage = (filePath: string) => {
-  return http.upload<ResponseData<string>>(`volunteer/photo`, {
+  return http.upload<ResponseData<string>>(`family/photo`, {
     filePath,
     name: "photo",
   });

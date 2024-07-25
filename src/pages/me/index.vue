@@ -22,31 +22,27 @@
 import { defineComponent, computed, ref } from "vue";
 import VolunteerInformationBox from "@/components/VolunteerInformationBox/index.vue";
 import { useStore } from "vuex";
-import authService from "@/service/authService";
 import { useTop } from "@/uses/useTop";
-import { ActionTypes } from "@/enums/actionTypes";
 import store from "@/store";
-import { requestGetAllUserRepairOrder } from "@/api/myRepairOrder";
 import { repairOrder } from "@/api/types/models";
-import { showToast } from "@/utils/helper";
 const userRepairInfo = ref<repairOrder>({});
 const logged = computed(() => {
   console.log("logged", store.getters.logged);
   return store.getters.logged;
 });
-const getUserRepairInfo = async () => {
-  if (logged.value !== "unlogin") {
-    try {
-      const res = await requestGetAllUserRepairOrder();
-      if (res.data.result) {
-        userRepairInfo.value = res.data.result.records;
-      }
-    } catch (error) {
-      showToast("获取数据失败");
-    }
-  }
-  return {};
-};
+// const getUserRepairInfo = async () => {
+//   if (logged.value !== "unlogin") {
+//     try {
+//       const res = await requestGetAllUserRepairOrder();
+//       if (res.data.result) {
+//         userRepairInfo.value = res.data.result.records;
+//       }
+//     } catch (error) {
+//       showToast("获取数据失败");
+//     }
+//   }
+//   return {};
+// };
 export default defineComponent({
   components: { VolunteerInformationBox },
   setup() {
@@ -65,16 +61,15 @@ export default defineComponent({
 
     return {
       ...useTop(),
-      ...getUserRepairInfo(),
       userRepairInfo,
       logged,
       topStatus,
       myInfo,
     };
   },
-  onShow() {
-    getUserRepairInfo();
-  },
+  // onShow() {
+  //   getUserRepairInfo();
+  // },
 });
 </script>
 

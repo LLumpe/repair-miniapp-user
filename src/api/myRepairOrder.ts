@@ -7,7 +7,7 @@ import { Banner, JavaList, Notice, ResponseData } from "./types/models";
  * @return {*}
  */
 export const requestUploadImage = (filePath: string) => {
-  return http.upload<ResponseData<string>>(`volunteer/photo`, {
+  return http.upload<ResponseData<string>>(`family/photo`, {
     filePath,
     name: "photo",
   });

@@ -11,10 +11,10 @@
       ></view>
       <view class="name">
         <span class="name-lg">
-          {{ status !== "unlogin" && name ? name : "登录/注册" }}</span
-        >
+          {{ status !== "unlogin" ? name || "匿名用户" : "登录/注册" }}
+        </span>
         <span class="name-ws">{{
-          status !== "unlogin" && phone ? phone : "支持微信快速登录"
+          status !== "unlogin" ? phone || "去绑定手机号码" : "支持微信快速登录"
         }}</span>
       </view>
       <view class="more">
@@ -37,20 +37,6 @@
           @click="handleNavigateToRepairList(item.id)"
         >
           <image :src="item.icon" class="list-box-image" />
-          <!-- <UBadge
-            class="uni-badge-left-margin"
-            :text="item.value"
-            absolute="rightTop"
-            size="small"
-            v-if="status !== 'unlogin'"
-          >
-            <image :src="item.icon" class="list-box-image" />
-          </UBadge> -->
-          <image
-            :src="item.icon"
-            class="list-box-image"
-            v-if="status === 'unlogin'"
-          />
           <view class="list-box-title">{{ item.title }}</view>
         </view>
       </view>
@@ -58,15 +44,19 @@
     <view class="service">
       <view class="title">
         <span class="title-name">功能服务</span>
-        <!-- <view class="title-more">
-          查看功能服务
-          <text class="iconfont icon-arrow-right" />
-        </view> -->
       </view>
       <view class="content">
         <view class="content-item" @click="handleEditAddress">
           <image src="@/static/images/user/address.png" />
           <span> 地址管理 </span>
+        </view>
+        <view class="content-item" @click="moreInfo('about_us')">
+          <image src="@/static/images/user/about.png" />
+          <span> 关于我们 </span>
+        </view>
+        <view class="content-item" @click="moreInfo('contact_us')">
+          <image src="@/static/images/user/contact.png" />
+          <span> 联系我们 </span>
         </view>
       </view>
     </view>
@@ -74,23 +64,11 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  Ref,
-  defineComponent,
-  PropType,
-  ref,
-  ComputedRef,
-  watch,
-} from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import authService from "@/service/authService";
 import dayjs from "@/utils/dayjs";
 import { navigateTo, showToast } from "@/utils/helper";
-import UCountTo from "../UCountTo/index.vue";
-import { Case, repairOrder } from "@/api/types/models";
-import { requestGetVolunteerCases } from "@/api/mission";
-import { useStore } from "vuex";
-import { requestGetAllUserRepairOrder } from "@/api/myRepairOrder";
+import store from "@/store";
 
 const useLogin = () => {
   const handleLogin = () => {
@@ -101,12 +79,42 @@ const useLogin = () => {
     }
   };
   const handleEditAddress = () => {
-    uni.navigateTo({
-      url: "/pages/address/index",
-    });
+    const logged = store.getters.logged;
+    if (logged) {
+      uni.navigateTo({
+        url: "/pages/address/index",
+      });
+    } else {
+      authService.login();
+    }
   };
-  return { handleLogin, handleClickItem, handleEditAddress };
+  const moreInfo = (sceneType: string) => {
+    navigateTo("/pages/announcement/index", { sceneType: sceneType });
+  };
+  return { handleLogin, handleClickItem, handleEditAddress, moreInfo };
 };
+const orderList = [
+  {
+    id: 2,
+    icon: "../../static/images/user/repairring.png",
+    title: "待接单",
+  },
+  {
+    id: 3,
+    icon: "../../static/images/user/unconfirmed.png",
+    title: "进行中",
+  },
+  {
+    id: 5,
+    icon: "../../static/images/user/done.png",
+    title: "已完成",
+  },
+  {
+    id: 6,
+    icon: "../../static/images/user/cancel.png",
+    title: "已售后",
+  },
+];
 export default defineComponent({
   name: "VolunteerInformationBox",
   components: {},
@@ -125,10 +133,10 @@ export default defineComponent({
     },
   },
   setup(props) {
+    console.log("props", props.status, props.userInfo);
+
     const name = computed(() => {
-      return props.status === "me"
-        ? props?.userInfo?.volunteerInformation?.name
-        : props?.userInfo?.name;
+      return props?.userInfo?.name;
     });
 
     const sex = computed(() => {
@@ -158,7 +166,12 @@ export default defineComponent({
     });
 
     const handleEditProfile = () => {
-      navigateTo("/pages/editProfile/index");
+      const logged = store.getters.logged;
+      if (logged) {
+        navigateTo("/pages/editProfile/index");
+      } else {
+        authService.login();
+      }
     };
 
     const handleJump = () => {
@@ -181,9 +194,6 @@ export default defineComponent({
       if (props.status === "unlogin") {
         authService.login(true);
       } else {
-        // uni.navigateTo({
-        //   url: `/pages/repairList/index?pageIndex=${index}`,
-        // });
         navigateTo("/pages/repairList/index", { pageIndex: index });
       }
     };
@@ -194,34 +204,8 @@ export default defineComponent({
         authService.login(true);
       } else {
         navigateTo("/pages/repairList/index", { pageIndex: 0 });
-        // uni.navigateTo({
-        //   url: `/pages/repairList/index`,
-        // });
       }
     };
-    const orderList = [
-      {
-        id: 2,
-        icon: "../../static/images/user/repairring.png",
-        title: "待接单",
-      },
-      {
-        id: 3,
-        icon: "../../static/images/user/unconfirmed.png",
-        title: "进行中",
-      },
-      {
-        id: 5,
-        icon: "../../static/images/user/done.png",
-        title: "已完成",
-      },
-      {
-        id: 6,
-        icon: "../../static/images/user/cancel.png",
-        title: "已售后",
-      },
-    ];
-    console.log("isLogin?", props.status);
     return {
       ...useLogin(),
       name,

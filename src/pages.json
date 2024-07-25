@@ -31,6 +31,12 @@
       }
     },
     {
+      "path": "pages/editName/index",
+      "style": {
+        "navigationBarTitleText": "昵称修改"
+      }
+    },
+    {
       "path": "pages/publishOrder/index",
       "style": {
         "navigationBarTitleText": "发布维修订单",

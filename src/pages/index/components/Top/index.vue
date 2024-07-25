@@ -43,7 +43,7 @@ const useBanners = () => {
   });
 
   const handleClickBanner = (id: number) => {
-    navigateTo("/pages/announcement/index", { id });
+    // navigateTo("/pages/announcement/index", { id });
   };
 
   return { banners, handleClickBanner };
@@ -104,10 +104,9 @@ export default defineComponent({
     background-position: 50% 50%;
     border-radius: 20rpx;
     overflow: hidden;
-
-    &-default {
-      background-image: url("https://fwwb2020-common.tgucsdn.com/images/banner/default.jpg");
-    }
+    // &-default {
+    //   background-image: url("https://fwwb2020-common.tgucsdn.com/images/banner/default.jpg");
+    // }
   }
 }
 </style>

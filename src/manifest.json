@@ -52,7 +52,7 @@
     "usingComponents": true,
     "lazyCodeLoading": "requiredComponents",
     "optimization": { "subPackages": true },
-    "appid": "wx9cd18091abc31d15",
+    "appid": "wxc10190af18de5a18",
     "setting": {
       "urlCheck": true,
       "minified": true

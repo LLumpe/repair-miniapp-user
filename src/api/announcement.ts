@@ -1,3 +1,13 @@
+/*
+ * @Author: LLumpe LLumpe@163.com
+ * @Date: 2024-07-09 03:16:54
+ * @LastEditors: LLumpe LLumpe@163.com
+ * @LastEditTime: 2024-07-26 00:17:28
+ * @FilePath: \repair-miniapp-user\src\api\announcement.ts
+ * @Description:
+ *
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved.
+ */
 import http from "@/utils/request";
 import { Banner, JavaList, Notice, ResponseData } from "./types/models";
 
@@ -6,11 +16,12 @@ import { Banner, JavaList, Notice, ResponseData } from "./types/models";
  *
  * @return {*}
  */
-export const requestGetAnnouncements = () => {
+export const requestGetAnnouncements = (params: { [key: string]: string }) => {
+  console.log("params", params);
   return http.request<ResponseData<JavaList<Notice>>>({
-    url: `notice`,
+    url: `api/richText`,
     method: "GET",
-    params: { roleId: 2, display: 1 },
+    params: params,
     data: {},
     custom: { noAuth: true },
   });

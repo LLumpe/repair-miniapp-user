@@ -1,25 +1,23 @@
 import http from "@/utils/request";
 import {
-  BindVolunteerInformation,
+  Family,
+  FamilyAvatarUrl,
+  FamilyInformation,
+  FamilyLoginCode,
+  FamilyRefreshToken,
+  FamilyUserinfo,
   ResponseData,
-  Volunteer,
-  VolunteerAvatarUrl,
-  VolunteerBindPhone,
-  VolunteerInformation,
-  VolunteerLoginCode,
-  VolunteerRefreshToken,
-  volunteerUserInfo,
 } from "./types/models";
 
 /**
  * 登录
  *
- * @param {VolunteerLoginCode} params
+ * @param {FamilyLoginCode} params
  * @return {*}
  */
-export const requestLogin = (params: VolunteerLoginCode) => {
-  return http.request<ResponseData<Volunteer>>({
-    url: `volunteer/login`,
+export const requestLogin = (params: FamilyLoginCode) => {
+  return http.request<ResponseData<Family>>({
+    url: `family/login`,
     method: "POST",
     params: {},
     data: params,
@@ -30,12 +28,12 @@ export const requestLogin = (params: VolunteerLoginCode) => {
 /**
  * 刷新 token
  *
- * @param {VolunteerRefreshToken} params
+ * @param {FamilyRefreshToken} params
  * @return {*}
  */
-export const requestRefreshToken = (params: VolunteerRefreshToken) => {
+export const requestRefreshToken = (params: FamilyRefreshToken) => {
   return http.request<ResponseData<object>>({
-    url: `volunteer/refresh`,
+    url: `family/refresh`,
     method: "POST",
     params: {},
     data: params,
@@ -44,28 +42,13 @@ export const requestRefreshToken = (params: VolunteerRefreshToken) => {
 };
 
 /**
- * 用微信的 userInfo 初始化个人信息（头像等）
- *
- * @param {volunteerUserInfo} params
- * @return {*}
- */
-export const requestUpdateInfo = (params: volunteerUserInfo) => {
-  return http.request<ResponseData<object>>({
-    url: `volunteer/userinfo`,
-    method: "POST",
-    params: {},
-    data: params,
-  });
-};
-
-/**
- * 获取志愿者信息
+ * 获取个人信息
  *
  * @return {*}
  */
 export const requestGetUserInfo = () => {
-  return http.request<ResponseData<Volunteer>>({
-    url: `volunteer/information`,
+  return http.request<ResponseData<Family>>({
+    url: `family`,
     method: "GET",
     params: {},
     data: {},
@@ -75,12 +58,12 @@ export const requestGetUserInfo = () => {
 /**
  * 绑定手机
  *
- * @param {VolunteerBindPhone} params
+ * @param {FamilyInformation} params
  * @return {*}
  */
-export const requestBindPhone = (params: VolunteerBindPhone) => {
+export const requestBindPhone = (params: FamilyInformation) => {
   return http.request<ResponseData<object>>({
-    url: `volunteer/bindPhone`,
+    url: `family/phone`,
     method: "POST",
     params: {},
     data: params,
@@ -88,17 +71,46 @@ export const requestBindPhone = (params: VolunteerBindPhone) => {
 };
 
 /**
- * 绑定身份信息
+ * 修改个人信息
  *
- * @param {BindVolunteerInformation} params
+ * @param {{
+ *   avatarUrl?: string;
+ *   city?: string;
+ *   country?: string;
+ *   name?: string;
+ *   nickName?: string;
+ *   province?: string;
+ *   sex?: number;
+ * }} params
  * @return {*}
  */
-export const requestBindVolunteerInformation = (
-  params: BindVolunteerInformation
-) => {
-  return http.request<ResponseData<VolunteerInformation>>({
-    url: `volunteer/information`,
-    method: "POST",
+export const requestUpdateInformation = (data: {
+  avatarUrl?: string;
+  city?: string;
+  country?: string;
+  name?: string;
+  nickName?: string;
+  province?: string;
+  sex?: number;
+}) => {
+  return http.request<ResponseData<object>>({
+    url: `family/info`,
+    method: "PUT",
+    params: {},
+    data: data,
+  });
+};
+
+/**
+ * 更换头像
+ *
+ * @param {FamilyAvatarUrl} params
+ * @return {*}
+ */
+export const requestUpdateAvatar = (params: FamilyAvatarUrl) => {
+  return http.request<ResponseData<string>>({
+    url: `family/avatar`,
+    method: "PUT",
     params: {},
     data: params,
   });
@@ -107,43 +119,13 @@ export const requestBindVolunteerInformation = (
 /**
  * 用微信用户信息初始化用户资料
  *
- * @param {volunteerUserInfo} params
+ * @param {FamilyUserinfo} params
  * @return {*}
  */
-export const requestUpdateWechatUserInfo = (params: volunteerUserInfo) => {
+export const requestUpdateWechatUserInfo = (params: FamilyUserinfo) => {
   return http.request<ResponseData<object>>({
-    url: `volunteer/userinfo`,
+    url: `family/userinfo`,
     method: "POST",
-    params: {},
-    data: params,
-  });
-};
-
-/**
- * 更新志愿者个人信息
- *
- * @param {VolunteerInformation} params
- * @return {*}
- */
-export const requestUpdateInformation = (params: VolunteerInformation) => {
-  return http.request<ResponseData<object>>({
-    url: `volunteer/information`,
-    method: "PUT",
-    params: {},
-    data: params,
-  });
-};
-
-/**
- * 更换头像
- *
- * @param {VolunteerAvatarUrl} params
- * @return {*}
- */
-export const requestUpdateAvatar = (params: VolunteerAvatarUrl) => {
-  return http.request<ResponseData<string>>({
-    url: `volunteer/avatar`,
-    method: "PUT",
     params: {},
     data: params,
   });

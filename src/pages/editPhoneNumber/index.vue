@@ -4,7 +4,7 @@
     <sms-verify
       :phone="smsForm.phone"
       :code="smsForm.code"
-      sms-api="volunteer/getUpdateCode"
+      sms-api="family/getUpdateCode"
       @phoneChange="handlePhoneChange"
       @codeChange="handleCodeChange"
     />
@@ -35,7 +35,7 @@ import {
   showLoading,
   showToast,
 } from "@/utils/helper";
-import { computed, defineComponent, reactive, ref } from "vue";
+import { computed, defineComponent, onUnmounted, reactive, ref } from "vue";
 
 const useSmsVerify = () => {
   const smsForm = reactive({
@@ -66,14 +66,16 @@ export default defineComponent({
   setup() {
     const smsVerify = useSmsVerify();
     const isLoading = ref(false);
-
+    const timeout = ref();
     const handleSubmit = async () => {
       showLoading("请稍候");
       try {
         await smsVerify.submit();
         await authService.getUserInfo();
         showToast("修改成功", "success");
-        navigateBack();
+        timeout.value = setTimeout(() => {
+          navigateBack();
+        }, 600);
       } catch (e) {
         console.log(e);
         hideLoading();
@@ -86,7 +88,9 @@ export default defineComponent({
         smsVerify.smsForm.code.length === 6
       );
     });
-
+    onUnmounted(() => {
+      clearTimeout(timeout.value);
+    });
     return {
       ...smsVerify,
       isLoading,

@@ -6,12 +6,12 @@
         v-if="step === 1"
         :phone="smsForm.phone"
         :code="smsForm.code"
-        sms-api="volunteer/getBindCode"
+        sms-api="family/getBindCode"
         @phoneChange="handlePhoneChange"
         @codeChange="handleCodeChange"
       />
     </view>
-    <view v-if="step === 2" class="step">
+    <!-- <view v-if="step === 2" class="step">
       <view class="title"> 绑定个人身份信息 </view>
       <u-input
         v-if="step === 2"
@@ -30,7 +30,7 @@
         label="身份证号"
         label-width="180"
       />
-    </view>
+    </view> -->
 
     <view class="actions">
       <u-button
@@ -42,7 +42,7 @@
         open-type="getUserInfo"
         @getuserinfo="handleNextStep"
       >
-        {{ step === 2 ? "确认提交" : "下一步" }}
+        确认提交
       </u-button>
     </view>
   </view>
@@ -122,20 +122,20 @@ export default defineComponent({
       if (step.value === 1) {
         try {
           await smsVerify.verifyPhone();
-          step.value = 2;
-        } catch (e) {
-          console.log(e);
-        }
-      } else if (step.value === 2) {
-        try {
-          await profileVerify.verifyProfile(userInfo);
-          showToast("验证成功", "success");
-          await authService.getUserInfo();
-          navigateBack();
         } catch (e) {
           console.log(e);
         }
       }
+      // else if (step.value === 2) {
+      //   try {
+      //     await profileVerify.verifyProfile(userInfo);
+      //     showToast("验证成功", "success");
+      //     await authService.getUserInfo();
+      //     navigateBack();
+      //   } catch (e) {
+      //     console.log(e);
+      //   }
+      // }
       isLoading.value = false;
     };
 
@@ -164,7 +164,7 @@ export default defineComponent({
   },
   onLoad(query) {
     if (query && query.step === "2") {
-      step.value = 2;
+      step.value = 1;
     } else {
       step.value = 1;
     }

@@ -26,8 +26,7 @@ const user: Module<UserState, RootState> = {
       console.debug(state);
     },
     [MutationTypes.SET_USER_INFO]: (state, userInfo: typeof state.userInfo) => {
-      state.hasVolunteerInfo =
-        userInfo && userInfo.volunteerInformation ? true : false;
+      state.hasVolunteerInfo = userInfo ? true : false;
       state.userInfo = userInfo;
       console.debug(state);
     },

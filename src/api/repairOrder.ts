@@ -101,3 +101,19 @@ export const requestOrderRepair = (data: any) => {
     custom: { noAuth: true },
   });
 };
+
+/**
+ * 用户取消订单
+ *
+ * @return {*}
+ */
+export const requestCancelOrder = (data: any) => {
+  console.log("data", data);
+  return http.request({
+    url: `api/repairOrder/cancel`,
+    method: "POST",
+    data: { id: data.id },
+    params: {},
+    custom: { noAuth: true },
+  });
+};

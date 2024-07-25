@@ -4,19 +4,25 @@
       <view class="box-info">
         <view class="box-info-user">
           <image
-            :src="orderDetail.volunteer.avatarUrl"
+            :src="
+              orderDetail.volunteer.avatarUrl || '@/static/images/icon/user.png'
+            "
             style="width: 80rpx; height: 80rpx; border-radius: 50%"
           />
           <view
             style="
               display: flex;
-              flex-direction: column;
+              flex-direction: row;
               color: #333;
               margin-left: 20rpx;
+              align-items: center;
             "
           >
-            <span style="font-size: 30rpx">
-              {{ orderDetail.volunteerInformation.name || "N/A" }}
+            <span style="font-size: 28rpx">
+              {{ orderDetail.volunteerInformation.name || "暂无师傅姓名" }}
+            </span>
+            <span style="font-size: 26rpx; margin-left: 10rpx; color: gray">
+              {{ orderDetail.volunteerInformation.name ? "师傅" : "" }}
             </span>
           </view>
           <view
@@ -34,10 +40,11 @@
               src="@/static/images/repairDetail/phone-call.png"
             />
             <span style="margin-left: 10rpx; font-size: 26rpx; color: #999">{{
-              orderDetail.volunteer.phone || "N/A"
+              orderDetail.volunteer.phone || "暂无师傅电话"
             }}</span>
           </view>
         </view>
+        <view class="box-divide" />
         <view v-if="orderDetail.state !== 2" class="box-info-item">
           <view class="box-info-item-label">维修描述</view>
           <view class="box-info-item-value">{{
@@ -57,11 +64,11 @@
                 :key="index"
                 @click="showImageEvent(item, index)"
               >
-                <image :src="item" />
+                <image :src="item" mode="aspectFit" />
               </view>
             </view>
             <view v-if="!orderDetail.repairImg && !orderDetail.repairImg.length"
-              >暂无照片</view
+              >暂无维修照片</view
             >
           </view>
         </view>
@@ -237,9 +244,9 @@ export default defineComponent({
   background-color: #ffffff;
   border-radius: 20rpx;
   .box {
-    width: 100%;
+    width: 630rpx;
     border-radius: 15rpx;
-    padding: 20rpx 40rpx 40rpx 40rpx;
+    padding: 5rpx 10rpx 40rpx 10rpx;
     &-info {
       width: 100%;
       height: fit-content;
@@ -254,7 +261,6 @@ export default defineComponent({
         margin-top: 20rpx;
         width: 100%;
         @include flex;
-        margin-left: 20rpx;
         &-label {
           width: 180rpx;
           font-size: $uni-font-size-sm;

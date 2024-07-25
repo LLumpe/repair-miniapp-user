@@ -9,12 +9,6 @@
             class="box-form-item-content"
             @click="handleSelectAddress"
           >
-            <!-- <textarea
-              v-model="formData.desc"
-              type="textArea"
-              placeholder="请输入维修描述"
-              :maxlength="50"
-            /> -->
             <view class="box-form-item-content-address">
               <view>
                 <view style="font-size: 30rpx; margin-bottom: 5rpx"
@@ -67,6 +61,9 @@
       </view>
       <view :key="index" class="box-form" v-for="(item, index) in deviceNumber">
         <title class="box-form-item-title">维修设备信息</title>
+        <span class="box-form-item-delete" @click="handleDeviceDelete(index)"
+          >删除</span
+        >
         <view class="box-form-item">
           <view label="维修设备填报" class="box-form-item-content">
             <view class="box-form-item-content-device">
@@ -247,9 +244,7 @@ export default defineComponent({
           if (res.data.success) {
             hideLoading();
             showToast("添加成功", "success");
-            setTimeout(() => {
-              navigateBack();
-            }, 600);
+            navigateBack();
           }
         }
         hideLoading();
@@ -312,18 +307,25 @@ export default defineComponent({
     };
     //添加设备
     const handleAdd = () => {
+      deviceNumber.value++;
+      formData.repairEquipmentNumber++;
+      formData.repairEquipmentContent.push({
+        equipmentName: "",
+        repairDesc: "",
+        equipmentImg: [],
+      });
+    };
+    //删除设备
+    const handleDeviceDelete = (index: number) => {
       uni.showModal({
         title: "提示",
-        content: "是否添加其他需要维修的设备？",
+        content: "确认删除设备？",
         success: function (res) {
           if (res.confirm) {
-            deviceNumber.value++;
-            formData.repairEquipmentNumber++;
-            formData.repairEquipmentContent.push({
-              equipmentName: "",
-              repairDesc: "",
-              equipmentImg: [],
-            });
+            console.log("index", index);
+            formData.repairEquipmentNumber--;
+            formData.repairEquipmentContent.splice(index, 1);
+            deviceNumber.value--;
           } else if (res.cancel) {
             console.log("用户点击取消");
           }
@@ -341,6 +343,7 @@ export default defineComponent({
       },
     };
     return {
+      handleDeviceDelete,
       deviceNumber,
       currentDate,
       handleDateChange,
@@ -373,7 +376,6 @@ export default defineComponent({
     rgba(30, 212, 70, 0)
   );
   .box {
-    position: relative;
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
@@ -381,6 +383,7 @@ export default defineComponent({
     &-form {
       width: 100%;
       border-radius: 20rpx;
+      position: relative;
       padding: 20rpx;
       margin-bottom: 20rpx;
       overflow: hidden;
@@ -388,6 +391,7 @@ export default defineComponent({
       background-color: #ffffff;
       &-item {
         width: 100%;
+        position: relative;
         display: block;
         padding: 0 5rpx 0 5rpx;
         &-title {
@@ -400,6 +404,13 @@ export default defineComponent({
             content: "*";
             color: red;
           }
+        }
+        &-delete {
+          color: red;
+          font-size: 24rpx;
+          position: absolute;
+          top: 24rpx;
+          right: 20rpx;
         }
         &-content {
           width: 100%;

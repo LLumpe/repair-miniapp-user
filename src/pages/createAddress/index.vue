@@ -79,6 +79,7 @@ import { Address } from "@/api/types/models";
 import {
   hideLoading,
   navigateBack,
+  navigateTo,
   showLoading,
   showModal,
   showToast,
@@ -90,7 +91,7 @@ import { useLocation } from "@/uses/useLocation";
 import { requestAddUserAddress, requestEditUserAddress } from "@/api/address";
 import { useStore } from "vuex";
 //当前位置
-// const currentLocation = reactive({ latitude: 0, longitude: 0 });
+const currentLocation = reactive({ latitude: 0, longitude: 0 });
 //获取位置信息
 const getLocation = () => {
   return new Promise((resolve, reject) => {
@@ -99,7 +100,7 @@ const getLocation = () => {
       altitude: true,
       success: (data) => {
         console.log("location", data);
-        [formData.latitude, formData.longitude] = [
+        [currentLocation.latitude, currentLocation.longitude] = [
           data.latitude,
           data.longitude,
         ];
@@ -131,7 +132,21 @@ export default defineComponent({
   setup(props) {
     const store = useStore();
     const getUserPhone = () => {
-      formData.phone = store.getters.userInfo.phone;
+      if (store.getters.userInfo.phone) {
+        formData.phone = store.getters.userInfo.phone;
+      } else {
+        uni.showModal({
+          title: "提示",
+          content: "您还未绑定手机号，是否前往绑定？",
+          success: function (res) {
+            if (res.confirm) {
+              navigateTo("/pages/editPhoneNumber/index");
+            } else if (res.cancel) {
+              console.log("用户点击取消");
+            }
+          },
+        });
+      }
     };
     const handleSubmit = async () => {
       showLoading("提交中");
@@ -175,8 +190,8 @@ export default defineComponent({
       let key = mapSettings.key; //使用在腾讯位置服务申请的key
       let referer = mapSettings.appName; //调用插件的app的名称
       let location = JSON.stringify({
-        latitude: formData.latitude,
-        longitude: formData.longitude,
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
       });
       wx.navigateTo({
         url:
@@ -211,6 +226,8 @@ export default defineComponent({
       formData.city = location.city; //市
       formData.district = location.district; //区
       formData.address = location.address; // 详细地址
+      formData.latitude = location.latitude; // 详细地址
+      formData.longitude = location.longitude; // 详细地址
     }
   },
   onUnload() {
@@ -233,10 +250,16 @@ export default defineComponent({
   .box {
     width: 100%;
     &-notice {
-      width: 100%;
-      height: 70rpx;
-      background-color: #ffffff;
+      width: 720rpx;
+      height: 78rpx;
+      margin: 10rpx auto 0 auto;
+      position: relative;
+      bottom: -15rpx;
+      z-index: -1;
+      background-color: #fafafa;
       line-height: 70rpx;
+      border-top-left-radius: 20rpx;
+      border-top-right-radius: 20rpx;
       text-align: center;
       font-weight: 600;
       color: $uni-color-error;
@@ -244,7 +267,7 @@ export default defineComponent({
     }
     &-edit {
       width: 720rpx;
-      margin: 20rpx auto;
+      margin: 0 auto;
       border-radius: 20rpx;
       background-color: #ffffff;
       box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;

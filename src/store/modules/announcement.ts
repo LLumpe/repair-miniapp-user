@@ -28,11 +28,14 @@ const Announcement: Module<AnnouncementState, RootState> = {
     [ActionTypes.getAnnouncements]: ({ commit }) => {
       return new Promise(async (resolve, reject) => {
         try {
-          const res = await requestGetAnnouncements();
-          if (res.data && res.data.data) {
-            commit(MutationTypes.SET_ANNOUNCEMENT_LIST, res.data.data);
+          const res = await requestGetAnnouncements({
+            sceneType: "user_notice",
+          });
+          console.log("notice", res.data.result);
+          if (res.data && res.data.result) {
+            commit(MutationTypes.SET_ANNOUNCEMENT_LIST, res.data.result);
           }
-          resolve(res.data.data);
+          resolve(res.data.result);
         } catch (e) {
           reject(e);
         }

@@ -1,9 +1,5 @@
 <template>
-  <view
-    v-if="announcements && announcements.length"
-    class="box"
-    @click="handleSwiperClick()"
-  >
+  <view v-if="announcements" class="box" @click="handleSwiperClick()">
     <view class="border">
       <image
         style="width: 100rpx; height: 100rpx"
@@ -28,7 +24,7 @@
             </view>
             <view class="second-text">
               <view class="abstract-text">
-                {{ item.description }}
+                {{ item.comment }}
               </view>
             </view>
           </swiper-item>
@@ -58,6 +54,7 @@ export default defineComponent({
     const announcements = computed(() => {
       return store.getters.announcements;
     });
+    console.log("announcements", announcements);
 
     const handleSwiperClick = () => {
       navigateTo("/pages/announcement/index", {

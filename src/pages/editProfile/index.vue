@@ -1,3 +1,13 @@
+<!--
+ * @Author: LLumpe LLumpe@163.com
+ * @Date: 2024-07-09 03:16:54
+ * @LastEditors: LLumpe LLumpe@163.com
+ * @LastEditTime: 2024-07-25 17:13:44
+ * @FilePath: \repair-miniapp-user\src\pages\editProfile\index.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
+-->
 <template>
   <view>
     <u-cell-group>
@@ -8,7 +18,6 @@
           flexDirection: 'row-reverse',
           alignItems: 'center',
         }"
-        :arrow="false"
         @click="handleChooseAvatar"
       >
         <view class="avatar">
@@ -26,73 +35,51 @@
         </view>
       </u-cell-item>
       <u-cell-item
-        title="姓名"
-        :value="userInfo.volunteerInformation.name"
-        :arrow="false"
+        title="昵称"
+        :value="userInfo.name || 'N/A'"
         hover-class="none"
+        @click="handleEditName"
       />
       <picker
         :range="sexRange"
         :range-key="'name'"
-        :value="userInfo.volunteerInformation.sex - 1"
+        :value="userInfo.sex - 1"
         @change="handleSexPickerChange"
       >
         <u-cell-item
           title="性别"
           :value="
-            userInfo.volunteerInformation.sex &&
-            (userInfo.volunteerInformation.sex === 1
-              ? '男'
-              : userInfo.volunteerInformation.sex === 2
-              ? '女'
-              : '')
+            userInfo.sex &&
+            (userInfo.sex == 1 ? '男' : userInfo.sex == 2 ? '女' : '')
           "
         />
       </picker>
       <u-cell-item
-        title="生日"
-        :value="birthDay"
-        :arrow="false"
-        hover-class="none"
-      />
-    </u-cell-group>
-    <u-cell-group title=" ">
-      <u-cell-item
         title="手机号"
-        :value="userInfo.phone"
+        :value="userInfo.phone || 'N/A'"
         @click="handleEditPhoneNumber"
-      />
-      <u-cell-item
-        title="身份证号"
-        :value="IDCardWithoutLastFour"
-        :arrow="false"
-        hover-class="none"
       />
     </u-cell-group>
     <u-cell-group title=" ">
       <u-cell-item
         title="加入时间"
-        :value="userInfo.volunteerInformation.registerTime"
+        :value="userInfo.registerTime || 'N/A'"
         :arrow="false"
         hover-class="none"
       />
       <u-cell-item
         title="加入时长"
-        :value="registerTimeFromNow"
+        :value="registerTimeFromNow || 'N/A'"
         :arrow="false"
         hover-class="none"
       />
       <picker
         mode="region"
-        :value="addressArray"
+        :value="addressArray || 'N/A'"
         @change="handleAddressPickerChange"
       >
         <u-cell-item title="常居地" :value="address" />
       </picker>
-      <!-- <u-cell-item
-        title="个人简介"
-        value="新版本"
-      /> -->
     </u-cell-group>
     <u-cell-group title=" ">
       <view class="quit" @click="handleLogout"> 退出登录 </view>
@@ -138,36 +125,17 @@ const useShowInfo = () => {
   const userInfo = computed(() => {
     return store.getters.userInfo;
   });
-
+  console.log("userInfo", userInfo);
   const registerTimeFromNow = computed(() => {
-    const time: string = userInfo?.value?.volunteerInformation?.registerTime;
+    const time: string = userInfo?.value?.registerTime;
 
     return dayjs(time).fromNow(true);
   });
 
-  const birthDay = computed(() => {
-    const IDCard: string = userInfo?.value?.volunteerInformation?.idcard;
-
-    return (
-      IDCard &&
-      IDCard.substring(6, 10) +
-        "-" +
-        IDCard.substring(10, 12) +
-        "-" +
-        IDCard.substring(12, 14)
-    );
-  });
-
-  const IDCardWithoutLastFour = computed(() => {
-    const IDCard: string = userInfo?.value?.volunteerInformation?.idcard;
-
-    return IDCard && IDCard.slice(0, 14).padEnd(18, "*");
-  });
-
   const address = computed(() => {
-    const province = userInfo?.value?.volunteerInformation?.province;
-    const city = userInfo?.value?.volunteerInformation?.city;
-    const district = userInfo?.value?.volunteerInformation?.district;
+    const province = userInfo?.value?.province;
+    const city = userInfo?.value?.city;
+    const district = userInfo?.value?.district;
 
     return province && city && district
       ? `${province} ${city} ${district}`
@@ -175,9 +143,9 @@ const useShowInfo = () => {
   });
 
   const addressArray = computed(() => {
-    const province = userInfo?.value?.volunteerInformation?.province;
-    const city = userInfo?.value?.volunteerInformation?.city;
-    const district = userInfo?.value?.volunteerInformation?.district;
+    const province = userInfo?.value?.province;
+    const city = userInfo?.value?.city;
+    const district = userInfo?.value?.district;
 
     return [province, city, district];
   });
@@ -185,8 +153,6 @@ const useShowInfo = () => {
   return {
     userInfo,
     registerTimeFromNow,
-    birthDay,
-    IDCardWithoutLastFour,
     address,
     addressArray,
   };
@@ -242,6 +208,9 @@ const useEditAvatar = () => {
   return { handleChooseAvatar };
 };
 
+const handleEditName = () => {
+  navigateTo("/pages/editName/index");
+};
 const uploadAvatar = async (path: string) => {
   showLoading("请稍候");
   console.log("path", path);
@@ -282,8 +251,12 @@ export default defineComponent({
       ...useEditAddress(),
       ...useEditAvatar(),
       handleLogout,
+      handleEditName,
       handleEditPhoneNumber,
     };
+  },
+  onShow() {
+    authService.getUserInfo();
   },
   onLoad() {
     bus.on("uAvatarCropper", handleAvatarChange);

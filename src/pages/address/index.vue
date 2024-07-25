@@ -3,9 +3,9 @@
     <view class="box">
       <view
         class="box-item"
+        v-if="myAddress.length"
         v-for="(item, index) in myAddress"
         :key="item.id"
-        v-if="myAddress.length"
         @click="handleSelectAddress(item)"
       >
         <view class="box-item-content">
@@ -31,9 +31,11 @@
         <view class="box-item-option">
           <view class="box-item-option-checkbox">
             <checkbox
-              :checked="item.isDefault === 1"
+              :disabled="select"
+              :checked="item.isDefault == 1"
               style="transform: scale(0.7)"
-            />默认维修地址
+              @click="handleDefaultAddress(item)"
+            />设为默认地址
           </view>
           <span @click="handleConfirmDelete(item)" v-if="select === false">
             删除
@@ -59,20 +61,20 @@ import { Address } from "@/api/types/models";
 import {
   requestGetUserAddressByPage,
   requestDeleteUserAddress,
+  requestEditUserAddress,
 } from "@/api/address";
 import {
   hideLoading,
   navigateBack,
-  navigateTo,
   showLoading,
   showToast,
 } from "@/utils/helper";
-import UPopup from "@/components/UPopup/index.vue";
 const loadData = () => {
   try {
     requestGetUserAddressByPage({ current: 1, size: 10 }).then((res: any) => {
-      console.log("res:", res.data.result.records);
-      myAddress.value = res.data.result.records;
+      const addressData = res.data.result.records;
+      console.log("addressData:", addressData);
+      myAddress.value = addressData;
     });
   } catch (error) {
     console.log("error", error);
@@ -84,7 +86,6 @@ const showDelete = ref(false);
 const select = ref(false); //是否是选择地址
 export default defineComponent({
   name: "Address",
-  components: { UPopup },
   setup(props) {
     const getUserAddress = async () => {};
     const handleAddAddress = () => {
@@ -101,6 +102,8 @@ export default defineComponent({
     };
     //选择地址
     const handleSelectAddress = (address: Address) => {
+      console.log("address", address);
+
       if (select.value) {
         //获得当前页面实例
         const pages = getCurrentPages();
@@ -108,6 +111,34 @@ export default defineComponent({
         prevPage.$vm.getAddressFromPage(address);
         navigateBack();
       }
+    };
+    //编辑默认地址
+    const handleDefaultAddress = async (address: Address) => {
+      showLoading("设置默认地址中");
+      try {
+        if (address.isDefault === 1) {
+          const res = await requestEditUserAddress({
+            ...address,
+            isDefault: 0,
+          });
+          if (res.data.success) {
+            showToast("取消默认地址", "success");
+            loadData();
+          }
+        } else {
+          const res = await requestEditUserAddress({
+            ...address,
+            isDefault: 1,
+          });
+          if (res.data.success) {
+            showToast("设置默认地址", "success");
+            loadData();
+          }
+        }
+      } catch (error) {
+        showToast("error");
+      }
+      hideLoading();
     };
     const handleConfirmDelete = (address: Address) => {
       uni.showModal({
@@ -139,6 +170,7 @@ export default defineComponent({
       hideLoading();
     };
     return {
+      handleDefaultAddress,
       ...getUserAddress(),
       myAddress,
       handleConfirmDelete,

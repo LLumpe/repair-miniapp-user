@@ -11,11 +11,11 @@
           </view>
           <view class="box-list-item-top">
             <span class="box-list-item-top-time">
-              {{ item.createdAt }}
+              {{ item.createdAt || "N/A" }}
             </span>
             <view class="box-list-item-top-user">
               <image :src="item.familyUser.avatarUrl" />
-              <span style="color: #999">{{ item.familyUser.name }}</span>
+              <span style="color: #999">{{ item.name || "匿名订单" }}</span>
             </view>
           </view>
           <view class="box-list-item-divide" />
@@ -23,18 +23,18 @@
             <view class="box-list-item-content-address">
               <span style="color: #999">维修地区：</span>
               <span class="box-list-item-content-address-detail">
-                {{ item.province }} - {{ item.district }}
+                {{ item.province || "N/A" }} - {{ item.district || "N/A" }}
               </span>
             </view>
             <view class="box-list-item-content-address">
               <span style="color: #999">详细地址：</span>
               <span class="box-list-item-content-address-detail">
-                {{ item.address }}</span
+                {{ item.address || "N/A" }}</span
               >
             </view>
             <view class="box-list-item-content-number">
               <span style="color: #999">维修数量：</span>
-              {{ item.repairEquipmentNumber }}
+              {{ item.repairEquipmentNumber || "N/A" }}
             </view>
           </view>
         </view>

@@ -21,12 +21,20 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { navigateTo } from "@/utils/helper";
+import { useStore } from "vuex";
+import authService from "@/service/authService";
 export default defineComponent({
   name: "Publish",
   setup() {
-    function handleClickMissionRoom() {
-      navigateTo("/pages/publishOrder/index");
-    }
+    const store = useStore();
+    const handleClickMissionRoom = () => {
+      const logged = store.getters.logged;
+      if (logged === true) {
+        navigateTo("/pages/publishOrder/index");
+      } else {
+        authService.login();
+      }
+    };
     return { handleClickMissionRoom };
   },
 });

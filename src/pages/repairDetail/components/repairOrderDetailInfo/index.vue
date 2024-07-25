@@ -4,8 +4,11 @@
       <view class="box-info">
         <view class="box-info-user">
           <image
-            src="@/static/images/icon/user.png"
-            style="width: 80rpx; height: 80rpx"
+            :src="
+              orderDetail.familyUser.avatarUrl ||
+              '@/static/images/icon/user.png'
+            "
+            style="width: 80rpx; height: 80rpx; border-radius: 50%"
           />
           <view
             style="
@@ -15,8 +18,8 @@
               margin-left: 20rpx;
             "
           >
-            <span style="font-size: 30rpx">
-              {{ orderDetail.name || "N/A" }}
+            <span style="font-size: 28rpx">
+              {{ orderDetail.name || "匿名订单" }}
             </span>
             <span style="font-size: 24rpx; color: #999">{{
               orderDetail.createdAt || "N/A"
@@ -37,10 +40,11 @@
               src="@/static/images/repairDetail/phone-call.png"
             />
             <span style="margin-left: 10rpx; font-size: 26rpx; color: #999">{{
-              orderDetail.phone || "N/A"
+              orderDetail.familyUser.phone || "未绑定手机号码"
             }}</span>
           </view>
         </view>
+        <view class="box-divide" />
         <view class="box-info-item">
           <view class="box-info-item-label">维修设备</view>
           <view class="box-info-item-value">
@@ -78,8 +82,9 @@
           <view class="box-info-item-value">
             <view
               v-if="
-                orderDetail.repairEquipmentContent ||
-                orderDetail.repairEquipmentContent.length
+                orderDetail.repairEquipmentContent[repairIndex].equipmentImg &&
+                orderDetail.repairEquipmentContent[repairIndex].equipmentImg
+                  .length
               "
               class="box-info-item-value-image"
             >
@@ -91,13 +96,14 @@
                 :key="index"
                 @click="showImageEvent(item, index)"
               >
-                <image :src="item" mode="scaleToFill" />
+                <image :src="item" mode="aspectFit" />
               </view>
             </view>
             <view
               v-if="
-                !orderDetail.repairEquipmentContent &&
-                !orderDetail.repairEquipmentContent.length
+                !orderDetail.repairEquipmentContent[repairIndex].equipmentImg ||
+                !orderDetail.repairEquipmentContent[repairIndex].equipmentImg
+                  .length
               "
               >暂无照片</view
             >
@@ -118,11 +124,12 @@
             }}
           </view>
         </view>
-        <view class="box-info-item">
+        <view class="box-info-item" @click="handleClickRoutePlan">
           <view class="box-info-item-label">详细地址</view>
           <view class="box-info-item-value">
             {{ orderDetail.address || "N/A" }}
           </view>
+          <text class="iconfont icon-arrow-right" />
         </view>
         <view class="box-divide" />
         <view class="box-info-item">
@@ -140,7 +147,10 @@
       >
         <view class="phone">
           <view class="phone-title">联系用户</view>
-          <view class="phone-number" @click="handleCallUser(orderDetail.phone)">
+          <view
+            class="phone-number"
+            @click="handleCallUser(orderDetail.familyUser.phone)"
+          >
             <view style="display: flex; align-items: center">
               <image
                 style="width: 40rpx; height: 40rpx; margin-right: 20rpx"
@@ -151,7 +161,8 @@
             </view>
 
             <span
-              >{{ orderDetail.phone }} <text class="iconfont icon-arrow-right"
+              >{{ orderDetail.familyUser.phone }}
+              <text class="iconfont icon-arrow-right"
             /></span>
           </view>
         </view>
@@ -193,6 +204,8 @@
 import { ref, Ref, reactive, defineComponent, watch } from "vue";
 import UPopup from "@/components/UPopup/index.vue";
 import jestConfig from "jest.config";
+import { navigateTo } from "@/utils/helper";
+import mapSettings from "@/config/map";
 const repairIndex: Ref<number> = ref(0);
 const equipmentList: Ref<any> = ref([]);
 const pickIndex: Ref<number> = ref(0);
@@ -239,9 +252,47 @@ export default defineComponent({
       console.log("equipment", equipment);
       equipmentList.value = equipment;
     };
+    //规划路线
+    const handleClickRoutePlan = (value: any) => {
+      // let plugin = requirePlugin("routePlan");
+      console.log("value", value);
+      let key = mapSettings.key; //使用在腾讯位置服务申请的key
+      let referer = mapSettings.appName; //调用插件的app的名称
+      console.log("key,referer", key, referer);
+      let endPoint = JSON.stringify({
+        //终点
+        name: props.orderDetail.address,
+        latitude: props.orderDetail.latitude,
+        longitude: props.orderDetail.longitude,
+      });
+      wx.navigateTo({
+        url:
+          "plugin://routePlan/index?key=" +
+          key +
+          "&referer=" +
+          referer +
+          "&endPoint=" +
+          endPoint +
+          `&themeColor=${mapSettings.color}`,
+      });
+    };
     //联系用户事件
     const handleShowUserPhone = () => {
-      showPhone.value = true;
+      if (props.orderDetail.familyUser.phone) {
+        showPhone.value = true;
+      } else {
+        uni.showModal({
+          title: "提示",
+          content: "您还未绑定手机号，是否前往绑定？",
+          success: function (res) {
+            if (res.confirm) {
+              navigateTo("/pages/editPhoneNumber/index");
+            } else if (res.cancel) {
+              console.log("用户点击取消");
+            }
+          },
+        });
+      }
     };
     const handleCallUser = (value: string) => {
       uni.makePhoneCall({
@@ -260,6 +311,7 @@ export default defineComponent({
       repairIndex,
       equipmentList,
       pickIndex,
+      handleClickRoutePlan,
       showImage,
       handleCallUser,
       handlePickDevice,
@@ -280,15 +332,16 @@ export default defineComponent({
   background-color: #ffffff;
   border-radius: 20rpx;
   .box {
-    width: 100%;
+    width: 630rpx;
     border-radius: 15rpx;
-    padding: 20rpx 40rpx 40rpx 40rpx;
+    padding: 5rpx 10rpx 40rpx 10rpx;
     &-info {
       width: 100%;
       height: fit-content;
       &-user {
         width: 100%;
         @include flex;
+        margin: 10rpx 0;
         box-sizing: border-box;
         position: relative;
         align-items: center;
@@ -297,8 +350,6 @@ export default defineComponent({
         margin-top: 20rpx;
         width: 100%;
         @include flex;
-        margin-left: 20rpx;
-
         &-label {
           width: 170rpx;
           font-size: $uni-font-size-sm;
