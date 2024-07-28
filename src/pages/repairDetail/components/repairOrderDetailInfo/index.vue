@@ -22,7 +22,7 @@
               {{ orderDetail.name || "匿名订单" }}
             </span>
             <span style="font-size: 24rpx; color: #999">{{
-              orderDetail.createdAt || "N/A"
+              orderDetail.updatedAt || "N/A"
             }}</span>
           </view>
           <view
@@ -113,6 +113,12 @@
           <view class="box-info-item-label">期待维修日期</view>
           <view class="box-info-item-value">
             {{ orderDetail.expectDate || "N/A" }}
+          </view>
+        </view>
+        <view class="box-info-item">
+          <view class="box-info-item-label">期待维修师傅</view>
+          <view class="box-info-item-value">
+            {{ orderDetail.expectVolunteer || "无" }}
           </view>
         </view>
         <view class="box-info-item">

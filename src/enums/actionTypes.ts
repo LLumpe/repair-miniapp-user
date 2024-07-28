@@ -27,4 +27,5 @@ export enum ActionTypes {
   getUserFinishRepairOrders = "getUserFinishRepairOrders",
   getUserAftersaleRepairOrders = "getUserAftersaleRepairOrders",
   getUserTerminateRepairOrders = "getUserTerminateRepairOrders",
+  getRepairWorker = "getRepairWorker",
 }

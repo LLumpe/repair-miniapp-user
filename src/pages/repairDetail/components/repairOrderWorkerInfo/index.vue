@@ -12,16 +12,15 @@
           <view
             style="
               display: flex;
-              flex-direction: row;
+              flex-direction: column;
               color: #333;
               margin-left: 20rpx;
-              align-items: center;
             "
           >
             <span style="font-size: 28rpx">
               {{ orderDetail.volunteerInformation.name || "暂无师傅姓名" }}
             </span>
-            <span style="font-size: 26rpx; margin-left: 10rpx; color: gray">
+            <span style="font-size: 24rpx; margin-left: 10rpx; color: gray">
               {{ orderDetail.volunteerInformation.name ? "师傅" : "" }}
             </span>
           </view>

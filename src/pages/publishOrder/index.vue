@@ -49,11 +49,25 @@
                   @change="handleDateChange"
                 >
                   <view class="uni-input">{{ currentDate }}</view>
+                  <span v-if="!currentDate" style="font-size: 26rpx"
+                    >请选择期待维修日期</span
+                  >
                 </picker>
               </view>
               <text
                 class="iconfont icon-arrow-right"
                 style="align-items: center; display: flex"
+              />
+            </view>
+          </view>
+        </view>
+        <view class="box-form-item">
+          <title class="box-form-item-title_notrequired">期待维修师傅</title>
+          <view label="期待维修师傅" class="box-form-item-content">
+            <view class="box-form-item-content-worker">
+              <input
+                placeholder="请选择期待维修的师傅"
+                v-model="formData.expectVolunteer"
               />
             </view>
           </view>
@@ -145,6 +159,7 @@ export interface formType {
   name: string;
   phone: string;
   latitude: number;
+  expectVolunteer?: string | null;
   longitude: number;
   creatorType: number;
   repairEquipmentNumber: number;
@@ -184,12 +199,15 @@ export default defineComponent({
         year = year - 60;
       } else if (type === "end") {
         year = year + 2;
+      } else if (type === "current") {
+        day = day + 2;
       }
       month = month > 9 ? month : "0" + month;
       day = day > 9 ? day : "0" + day;
       return `${year}-${month}-${day}`;
     };
-    const currentDate = ref(getDate());
+    const currentDate = ref(getDate("current"));
+    const repairWorker = ref(null);
     const formData = reactive<formType>({
       id: 0,
       userId: 0,
@@ -203,6 +221,7 @@ export default defineComponent({
       latitude: 0,
       longitude: 0,
       creatorType: 1,
+      expectVolunteer: null,
       repairEquipmentNumber: 0,
       repairEquipmentContent: [],
       expectDate: currentDate.value,
@@ -343,6 +362,7 @@ export default defineComponent({
       },
     };
     return {
+      repairWorker,
       handleDeviceDelete,
       deviceNumber,
       currentDate,
@@ -375,11 +395,13 @@ export default defineComponent({
     rgba(17, 206, 118, 0.2),
     rgba(30, 212, 70, 0)
   );
+
   .box {
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
     padding: 20rpx 10rpx 20rpx 10rpx;
+
     &-form {
       width: 100%;
       border-radius: 20rpx;
@@ -389,22 +411,34 @@ export default defineComponent({
       overflow: hidden;
       box-sizing: border-box;
       background-color: #ffffff;
+
       &-item {
         width: 100%;
         position: relative;
         display: block;
         padding: 0 5rpx 0 5rpx;
+
         &-title {
           display: flex;
           align-items: center;
           font-size: $uni-font-size-xl;
           letter-spacing: 2rpx;
           font-weight: 600;
+
           &::before {
             content: "*";
             color: red;
           }
         }
+        &-title_notrequired {
+          display: flex;
+          align-items: center;
+          font-size: $uni-font-size-xl;
+          letter-spacing: 2rpx;
+          font-weight: 600;
+          padding-left: 20rpx;
+        }
+
         &-delete {
           color: red;
           font-size: 24rpx;
@@ -412,11 +446,13 @@ export default defineComponent({
           top: 24rpx;
           right: 20rpx;
         }
+
         &-content {
           width: 100%;
           display: flex;
           flex-direction: row;
           margin: 20rpx 0 20rpx 0;
+
           &-address {
             width: 100%;
             padding-left: 20rpx;
@@ -427,10 +463,12 @@ export default defineComponent({
             border-radius: 15rpx;
             border: 1rpx solid #ffffff;
             transition: all 0.2s;
+
             &:active {
               border: 1rpx solid gainsboro;
             }
           }
+
           &-date {
             width: 100%;
             display: flex;
@@ -438,13 +476,38 @@ export default defineComponent({
             justify-content: space-between;
             margin-left: 20rpx;
           }
+          &-worker {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            color: $uni-text-color;
+            border-radius: 15rpx;
+            padding-left: 10rpx;
+            border: 1rpx solid #ffffff;
+            transition: all 0.2s;
+            input {
+              width: 100%;
+              margin-top: 10rpx;
+              padding: 20rpx;
+              height: 10rpx;
+              font-size: $uni-font-size-sm;
+              border-radius: 15rpx;
+              border: 1rpx solid $uni-border-color;
+              &:hover {
+                background-color: #f4f4f4;
+              }
+            }
+          }
           &-device {
             width: 100%;
             display: flex;
             flex-direction: column;
+
             &-item {
               display: flex;
               flex-direction: column;
+
               input {
                 margin-top: 10rpx;
                 padding: 20rpx;
@@ -452,10 +515,12 @@ export default defineComponent({
                 font-size: $uni-font-size-base;
                 border-radius: 15rpx;
                 border: 1rpx solid $uni-border-color;
+
                 &:hover {
                   background-color: #f4f4f4;
                 }
               }
+
               textarea {
                 font-size: $uni-font-size-base;
                 box-sizing: border-box;
@@ -464,10 +529,12 @@ export default defineComponent({
                 height: 300rpx;
                 border-radius: 15rpx;
                 border: 1rpx solid $uni-border-color;
+
                 &:hover {
                   background-color: #f4f4f4;
                 }
               }
+
               &-title {
                 font-size: $uni-font-size-lg;
                 color: $uni-text-color;
@@ -476,11 +543,13 @@ export default defineComponent({
               }
             }
           }
+
           &-desc {
             width: 100%;
             height: 200rpx;
             margin-top: 20rpx;
             border-radius: 20rpx;
+
             textarea {
               font-size: $uni-font-size-base;
               box-sizing: border-box;
@@ -489,11 +558,13 @@ export default defineComponent({
               height: 100%;
               border-radius: 20rpx;
               border: 1rpx solid $uni-border-color;
+
               &:hover {
                 background-color: #f4f4f4;
               }
             }
           }
+
           &-image {
             box-sizing: border-box;
             width: 100%;
@@ -507,11 +578,13 @@ export default defineComponent({
         }
       }
     }
+
     &-add {
       width: 100%;
       height: 80rpx;
       box-sizing: border-box;
       border-radius: 20rpx;
+
       button {
         border-radius: 20rpx;
         height: 80rpx;
@@ -520,15 +593,18 @@ export default defineComponent({
         background-color: #ffffff;
         color: black;
         font-weight: 600;
+
         &:active {
           background-color: #f4f4f4;
         }
       }
     }
+
     &-block {
       width: 100%;
       height: 150rpx;
     }
+
     &-button {
       width: 100%;
       background-color: #ffffff;
@@ -540,6 +616,7 @@ export default defineComponent({
       bottom: 0;
       left: 0;
       z-index: 2;
+
       button {
         margin-top: 20rpx;
         width: 700rpx;

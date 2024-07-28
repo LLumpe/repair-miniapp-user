@@ -2,7 +2,7 @@
  * @Author: LLumpe LLumpe@163.com
  * @Date: 2024-07-09 03:16:54
  * @LastEditors: LLumpe LLumpe@163.com
- * @LastEditTime: 2024-07-26 00:17:28
+ * @LastEditTime: 2024-07-26 14:53:33
  * @FilePath: \repair-miniapp-user\src\api\announcement.ts
  * @Description:
  *
@@ -48,11 +48,11 @@ export const requestGetAnnouncementByID = (id: number) => {
  *
  * @return {*}
  */
-export const requestGetBanners = () => {
+export const requestGetBanners = (params: { [key: string]: string }) => {
   return http.request<ResponseData<JavaList<Banner>>>({
-    url: `notice/banner`,
+    url: `api/banner`,
     method: "GET",
-    params: { roleId: 2 },
+    params: params,
     data: {},
     custom: { noAuth: true },
   });

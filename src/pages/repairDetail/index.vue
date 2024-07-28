@@ -513,7 +513,6 @@ export default defineComponent({
       height: 200rpx;
       @include flex;
       align-items: center;
-
       &-content {
         flex: 1;
         // height: 130rpx;

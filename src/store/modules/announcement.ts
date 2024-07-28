@@ -1,3 +1,13 @@
+/*
+ * @Author: LLumpe LLumpe@163.com
+ * @Date: 2024-07-09 03:16:55
+ * @LastEditors: LLumpe LLumpe@163.com
+ * @LastEditTime: 2024-07-26 14:53:21
+ * @FilePath: \repair-miniapp-user\src\store\modules\announcement.ts
+ * @Description:
+ *
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved.
+ */
 import { Module } from "vuex";
 import { AnnouncementState, RootState } from "../types";
 import { MutationTypes } from "@/enums/mutationTypes";
@@ -44,9 +54,9 @@ const Announcement: Module<AnnouncementState, RootState> = {
     [ActionTypes.getBanners]: ({ commit }) => {
       return new Promise(async (resolve, reject) => {
         try {
-          const res = await requestGetBanners();
-          if (res.data && res.data.data) {
-            commit(MutationTypes.SET_BANNER_LIST, res.data.data);
+          const res = await requestGetBanners({ type: 1 });
+          if (res.data && res.data.result) {
+            commit(MutationTypes.SET_BANNER_LIST, res.data.result);
           }
           resolve(res.data.data);
         } catch (e) {

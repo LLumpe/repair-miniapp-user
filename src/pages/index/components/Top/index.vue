@@ -18,8 +18,8 @@
       <swiper-item v-for="item in banners" :key="item.id">
         <view
           class="swiper-item"
-          :style="{ backgroundImage: `url(${item.url})` }"
-          @click="handleClickBanner(item.noticeId)"
+          :style="{ backgroundImage: `url(${item.imgUrl})` }"
+          @click="handleClickBanner(item.id)"
         />
       </swiper-item>
     </swiper>

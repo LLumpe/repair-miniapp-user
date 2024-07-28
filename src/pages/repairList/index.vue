@@ -120,7 +120,6 @@ export default defineComponent({
 .repairList {
   .box {
     width: 100%;
-
     .tag {
       display: inline-block;
       vertical-align: middle;
