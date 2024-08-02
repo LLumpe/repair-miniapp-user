@@ -2,7 +2,7 @@
  * @Author: LLumpe LLumpe@163.com
  * @Date: 2024-07-09 03:16:54
  * @LastEditors: LLumpe LLumpe@163.com
- * @LastEditTime: 2024-07-25 17:13:44
+ * @LastEditTime: 2024-07-29 14:22:27
  * @FilePath: \repair-miniapp-user\src\pages\editProfile\index.vue
  * @Description: 
  * 
@@ -106,6 +106,7 @@ import {
 import { VolunteerInformation } from "@/api/types/models";
 import { requestUploadImage } from "@/api/common";
 import bus from "@/utils/bus";
+import store from "@/store";
 
 const editUserInfo = async (params: VolunteerInformation) => {
   showLoading("请稍候");
@@ -209,7 +210,7 @@ const useEditAvatar = () => {
 };
 
 const handleEditName = () => {
-  navigateTo("/pages/editName/index");
+  navigateTo("/pages/editName/index", { name: store.getters.userInfo.name });
 };
 const uploadAvatar = async (path: string) => {
   showLoading("请稍候");

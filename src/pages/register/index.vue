@@ -109,7 +109,7 @@ const useProfileVerify = () => {
 };
 
 export default defineComponent({
-  components: { UButton, UInput, SmsVerify },
+  components: { UButton, SmsVerify },
   setup() {
     const smsVerify = useSmsVerify();
     const profileVerify = useProfileVerify();

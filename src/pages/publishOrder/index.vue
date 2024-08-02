@@ -200,7 +200,12 @@ export default defineComponent({
       } else if (type === "end") {
         year = year + 2;
       } else if (type === "current") {
-        day = day + 2;
+        const futureDate = new Date();
+        futureDate.setDate(date.getDate() + 2);
+        year = futureDate.getFullYear();
+        month = futureDate.getMonth() + 1;
+        day = futureDate.getDate();
+        return `${year}-${month}-${day}`;
       }
       month = month > 9 ? month : "0" + month;
       day = day > 9 ? day : "0" + day;

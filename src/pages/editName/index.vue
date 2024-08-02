@@ -41,9 +41,15 @@ const editUserInfo = async (params: VolunteerInformation) => {
 export default defineComponent({
   name: "EditName",
   components: { UCellGroup, UCellItem },
-  setup() {
+  props: {
+    name: {
+      type: String,
+      default: "",
+    },
+  },
+  setup(props) {
     const useEditName = () => {
-      const name = ref<string>("");
+      const name = ref(props.name);
       const handleEditName = async () => {
         await editUserInfo({ name: name.value });
       };
