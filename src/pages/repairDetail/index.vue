@@ -280,16 +280,27 @@ export default defineComponent({
     //返修
     const handleRepairBack = () => {
       //type 0表示返修,1表示退单
-      navigateTo("/pages/orderBack/index", {
-        id: currentRepairOrder.value.id,
-        type: 0,
+      uni.navigateTo({
+        url:
+          "/pages/orderBack/index?id=" +
+          currentRepairOrder.value.id +
+          "&type=0&repairOrder=" +
+          encodeURIComponent(props.repairOrder),
       });
+      // navigateTo("/pages/orderBack/index", {
+      //   id: currentRepairOrder.value.id,
+      //   type: 0,
+      //   repairOrder: encodeURIComponent(props.repairOrder),
+      // });
     };
     //退单
     const handleOrderBack = () => {
-      navigateTo("/pages/orderBack/index", {
-        id: currentRepairOrder.value.id,
-        type: 1,
+      uni.navigateTo({
+        url:
+          "/pages/orderBack/index?id=" +
+          currentRepairOrder.value.id +
+          "&type=1&repairOrder=" +
+          encodeURIComponent(props.repairOrder),
       });
     };
     //提醒用户

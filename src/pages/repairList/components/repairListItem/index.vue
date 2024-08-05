@@ -6,6 +6,7 @@
           <view class="box-list-item-label">
             <span class="box-list-item-label-text">
               {{ repairLabel[String(item.state)] }}
+              {{ item.orderType === 2 ? "(返修订单)" : "" }}
             </span>
             <text class="iconfont icon-arrow-right box-list-item-label-arrow" />
           </view>
@@ -68,6 +69,7 @@ const repairLabel = {
   "-10": "已售后",
   "-20": "已终止",
 };
+
 import Empty from "@/components/Empty/index.vue";
 import { useStore } from "vuex";
 import { repairOrder } from "@/api/types/models";
