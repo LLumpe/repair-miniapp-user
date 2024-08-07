@@ -33,12 +33,12 @@ export const requestGetAllRepairOrder = (
  *
  * @return {*}
  */
-export const requestGetAllRepairOrderById = (params: { id: number }) => {
+export const requestGetRepairOrderById = (id: number) => {
   return http.request({
     url: `api/repairOrder/id`,
     method: "GET",
     data: {},
-    params: params,
+    params: { id: id },
     custom: { noAuth: true },
   });
 };

@@ -267,8 +267,10 @@ export default defineComponent({
           console.log("res", res);
           if (res.data.success) {
             hideLoading();
-            showToast("添加成功", "success");
-            navigateBack();
+            showToast("发布成功", "success");
+            setTimeout(() => {
+              navigateBack();
+            }, 600);
           }
         }
         hideLoading();

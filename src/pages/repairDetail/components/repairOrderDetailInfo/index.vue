@@ -144,6 +144,30 @@
             {{ orderDetail.createdAt || "N/A" }}
           </view>
         </view>
+        <view
+          class="box-info-navi"
+          v-if="orderDetail.historyOrderId || orderDetail.repairOrderId"
+        >
+          <a
+            style="float: left"
+            v-show="orderDetail.repairOrderId"
+            @click="handleCheckRepair(orderDetail.repairOrderId)"
+          >
+            <text
+              class="iconfont icon-arrow-right"
+              style="transform: rotate(180deg); display: inline-block"
+            />
+            查询返修订单
+          </a>
+          <a
+            style="float: right"
+            v-show="orderDetail.historyOrderId"
+            @click="handleCheckBack(orderDetail.historyOrderId)"
+          >
+            查询历史订单
+            <text class="iconfont icon-arrow-right" />
+          </a>
+        </view>
       </view>
       <u-popup
         v-model="showPhone"
@@ -210,8 +234,14 @@
 import { ref, Ref, reactive, defineComponent, watch } from "vue";
 import UPopup from "@/components/UPopup/index.vue";
 import jestConfig from "jest.config";
-import { navigateTo } from "@/utils/helper";
+import {
+  hideLoading,
+  navigateTo,
+  showLoading,
+  showToast,
+} from "@/utils/helper";
 import mapSettings from "@/config/map";
+import { requestGetRepairOrderById } from "@/api/repairOrder";
 const repairIndex: Ref<number> = ref(0);
 const equipmentList: Ref<any> = ref([]);
 const pickIndex: Ref<number> = ref(0);
@@ -305,6 +335,50 @@ export default defineComponent({
         phoneNumber: value,
       });
     };
+    const handleCheckRepair = async (id: number) => {
+      console.log("id", id);
+      showLoading("跳转中...");
+      try {
+        const res = await requestGetRepairOrderById(id);
+        console.log("res", res);
+        if (res.data.result) {
+          hideLoading();
+          uni.redirectTo({
+            url:
+              "/pages/repairDetail/index?repairOrder=" +
+              encodeURIComponent(JSON.stringify(res.data.result)),
+          });
+        }
+        hideLoading();
+      } catch (error) {
+        showToast("跳转失败");
+      }
+    };
+    const handleCheckBack = async (id: number) => {
+      console.log("id", id);
+      console.log("id", id);
+      showLoading("跳转中...");
+      try {
+        const res = await requestGetRepairOrderById(id);
+        console.log("res", res);
+        if (res.data.result) {
+          hideLoading();
+          uni.redirectTo({
+            url:
+              "/pages/repairDetail/index?repairOrder=" +
+              encodeURIComponent(JSON.stringify(res.data.result)),
+          });
+        }
+        hideLoading();
+      } catch (error) {
+        showToast("跳转失败");
+      }
+      // uni.navigateTo({
+      //   url:
+      //     "/pages/repairDetail/index?repairOrder=" +
+      //     encodeURIComponent(JSON.stringify(item)),
+      // });
+    };
     //监听props中data的变化
     watch(
       props,
@@ -314,6 +388,8 @@ export default defineComponent({
       { immediate: true }
     );
     return {
+      handleCheckRepair,
+      handleCheckBack,
       repairIndex,
       equipmentList,
       pickIndex,
@@ -351,6 +427,7 @@ export default defineComponent({
         box-sizing: border-box;
         position: relative;
         align-items: center;
+        border-radius: 15rpx;
       }
       &-item {
         margin-top: 20rpx;
@@ -391,6 +468,14 @@ export default defineComponent({
               }
             }
           }
+        }
+      }
+      &-navi {
+        width: 100%;
+        font-size: $uni-font-size-sm;
+        color: $uni-color-primary;
+        a {
+          margin: 20rpx 0;
         }
       }
     }
