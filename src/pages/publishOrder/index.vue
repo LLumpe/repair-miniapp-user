@@ -255,6 +255,30 @@ export default defineComponent({
           }, 1000);
         } else if (deviceNumber.value === 0) {
           showToast("请添加需要维修的设备", "none");
+        } else if (
+          formData.repairEquipmentContent.every((item: any) => {
+            if (item.equipmentName === "") {
+              return true;
+            }
+          })
+        ) {
+          showToast("请填写待维修设备名称");
+        } else if (
+          formData.repairEquipmentContent.every((item: any) => {
+            if (item.repairDesc === "") {
+              return true;
+            }
+          })
+        ) {
+          showToast("请填写待维修设备描述");
+        } else if (
+          formData.repairEquipmentContent.every((item: any) => {
+            if (item.equipmentImg.length === 0) {
+              return true;
+            }
+          })
+        ) {
+          showToast("请上传待维修设备图片");
         } else {
           const newData = {
             ...formData,
