@@ -156,12 +156,6 @@
         "selectedIconPath": "static/images/tabbar/home-active.png"
       },
       {
-        "pagePath": "pages/mall/index",
-        "text": "商城",
-        "iconPath": "static/images/tabbar/mall.png",
-        "selectedIconPath": "static/images/tabbar/mall-active.png"
-      },
-      {
         "pagePath": "pages/me/index",
         "text": "我的",
         "iconPath": "static/images/tabbar/user.png",

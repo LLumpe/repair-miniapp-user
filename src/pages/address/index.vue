@@ -288,13 +288,13 @@ export default defineComponent({
       flex-direction: column;
       align-items: center;
       image {
-        width: 200rpx;
-        height: 200rpx;
+        width: 150rpx;
+        height: 150rpx;
       }
       span {
         margin-top: 20rpx;
         color: #ffffff;
-        font-size: $uni-font-size-base;
+        font-size: $uni-font-size-sm;
         font-weight: 600;
       }
     }

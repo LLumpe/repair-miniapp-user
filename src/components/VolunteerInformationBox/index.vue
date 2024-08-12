@@ -47,15 +47,15 @@
       </view>
       <view class="content">
         <view class="content-item" @click="handleEditAddress">
-          <image src="@/static/images/user/address.png" />
+          <image src="@/static/images/user/address.png" webp="true" />
           <span> 地址管理 </span>
         </view>
         <view class="content-item" @click="moreInfo('about_us')">
-          <image src="@/static/images/user/about.png" />
+          <image src="@/static/images/user/about.png" webp="true" />
           <span> 关于我们 </span>
         </view>
         <view class="content-item" @click="moreInfo('contact_us')">
-          <image src="@/static/images/user/contact.png" />
+          <image src="@/static/images/user/contact.png" webp="true" />
           <span> 联系我们 </span>
         </view>
       </view>
@@ -387,15 +387,12 @@ export default defineComponent({
   .content {
     width: 100%;
     height: 100%;
-    display: grid;
-    grid-template-rows: repeat(2, auto);
-    grid-template-columns: repeat(4, 1fr);
-    align-items: center;
-    place-items: center;
     overflow: hidden;
-    padding: 10rpx 0;
+    visibility: none;
+    padding: 20rpx;
     &-item {
-      width: 130rpx;
+      float: left;
+      width: 165rpx;
       height: 130rpx;
       display: flex;
       flex-direction: column;

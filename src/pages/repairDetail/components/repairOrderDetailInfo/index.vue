@@ -4,10 +4,13 @@
       <view class="box-info">
         <view class="box-info-user">
           <image
-            :src="
-              orderDetail.familyUser.avatarUrl ||
-              '@/static/images/icon/user.png'
-            "
+            v-if="orderDetail.familyUser.avatarUrl"
+            :src="orderDetail.familyUser.avatarUrl"
+            style="width: 80rpx; height: 80rpx; border-radius: 50%"
+          />
+          <image
+            v-if="!orderDetail.familyUser.avatarUrl"
+            src="@/static/images/icon/user.png"
             style="width: 80rpx; height: 80rpx; border-radius: 50%"
           />
           <view
@@ -63,6 +66,21 @@
               </view>
             </picker>
           </view>
+          <view
+            style="
+              border-radius: 15rpx;
+              background-color: #09c46e;
+              font-size: 22rpx;
+              color: #ffffff;
+              padding: 0 14rpx;
+            "
+            v-if="orderDetail.repairEquipmentContent[repairIndex].state !== 0"
+            >{{
+              orderDetail.repairEquipmentContent[repairIndex].state === "-8"
+                ? "已退单"
+                : "已返修"
+            }}</view
+          >
         </view>
         <view class="box-info-item">
           <view class="box-info-item-label">设备名</view>

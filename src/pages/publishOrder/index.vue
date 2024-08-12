@@ -243,7 +243,6 @@ export default defineComponent({
       formData.longitude = address.longitude;
     };
     const handleSubmit = async () => {
-      showLoading("添加中");
       try {
         console.log("formData", formData);
         if (!formData.province && !formData.district && !formData.address) {
@@ -290,17 +289,14 @@ export default defineComponent({
           const res = await requestAddRepairOrder(newData);
           console.log("res", res);
           if (res.data.success) {
-            hideLoading();
             showToast("发布成功", "success");
             setTimeout(() => {
               navigateBack();
             }, 600);
           }
         }
-        hideLoading();
       } catch (error) {
         console.log(error);
-        hideLoading();
         showModalError("提交失败");
       }
     };
