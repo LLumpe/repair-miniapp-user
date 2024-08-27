@@ -62,6 +62,26 @@
           </view>
         </view>
         <view class="box-form-item">
+          <title class="box-form-item-title">维修方式</title>
+          <view label="维修方式" class="box-form-item-content">
+            <view class="box-form-item-content-date">
+              <view style="width: 100%">
+                <picker
+                  :value="formData.way"
+                  :range="wayRange"
+                  @change="handleWayChange"
+                >
+                  <view class="uni-input">{{ wayRange[currentWay] }}</view>
+                </picker>
+              </view>
+              <text
+                class="iconfont icon-arrow-right"
+                style="align-items: center; display: flex"
+              />
+            </view>
+          </view>
+        </view>
+        <view class="box-form-item">
           <title class="box-form-item-title_notrequired">期待维修师傅</title>
           <view label="期待维修师傅" class="box-form-item-content">
             <view class="box-form-item-content-worker">
@@ -110,6 +130,7 @@
                 <view label="上传图片" class="box-form-item-content-image">
                   <UUploader
                     :image-styles="imageStyles"
+                    :multiple="true"
                     @select="handleImageSelect($event, index)"
                     @delete="handleDelete($event, index)"
                     limit="3"
@@ -127,7 +148,9 @@
     </view>
     <view class="box-block"> </view>
     <view class="box-button">
-      <button @click="handleSubmit" type="primary">提交</button>
+      <button @click="handleSubmit" type="primary" :disabled="isDiabled">
+        提交
+      </button>
     </view>
   </view>
 </template>
@@ -164,6 +187,7 @@ export interface formType {
   creatorType: number;
   repairEquipmentNumber: number;
   repairEquipmentContent: Array<repairEquipmentDetail> | string;
+  way: string;
 }
 export interface UserType {
   id: number;
@@ -211,7 +235,10 @@ export default defineComponent({
       day = day > 9 ? day : "0" + day;
       return `${year}-${month}-${day}`;
     };
+    //是否可提交
+    const isDiabled = ref(false);
     const currentDate = ref(getDate("current"));
+    const currentWay = ref(0);
     const repairWorker = ref(null);
     const formData = reactive<formType>({
       id: 0,
@@ -230,6 +257,7 @@ export default defineComponent({
       repairEquipmentNumber: 0,
       repairEquipmentContent: [],
       expectDate: currentDate.value,
+      way: currentWay.value,
     });
     const deviceNumber = ref<number>(0);
     const getAddressFromPage = (address: formType) => {
@@ -255,30 +283,35 @@ export default defineComponent({
         } else if (deviceNumber.value === 0) {
           showToast("请添加需要维修的设备", "none");
         } else if (
-          formData.repairEquipmentContent.every((item: any) => {
+          !formData.repairEquipmentContent.every((item: any) => {
+            console.log("item", item.equipmentName === "");
             if (item.equipmentName === "") {
-              return true;
+              return false;
             }
+            return true;
           })
         ) {
           showToast("请填写待维修设备名称");
         } else if (
-          formData.repairEquipmentContent.every((item: any) => {
-            if (item.repairDesc === "") {
-              return true;
+          !formData.repairEquipmentContent.every((item: any) => {
+            if (item.repairDesc == "") {
+              return false;
             }
+            return true;
           })
         ) {
           showToast("请填写待维修设备描述");
         } else if (
-          formData.repairEquipmentContent.every((item: any) => {
+          !formData.repairEquipmentContent.every((item: any) => {
             if (item.equipmentImg.length === 0) {
-              return true;
+              return false;
             }
+            return true;
           })
         ) {
           showToast("请上传待维修设备图片");
         } else {
+          isDiabled.value = true;
           const newData = {
             ...formData,
             repairEquipmentContent: JSON.stringify(
@@ -291,12 +324,15 @@ export default defineComponent({
           if (res.data.success) {
             showToast("发布成功", "success");
             setTimeout(() => {
+              isDiabled.value = false;
               navigateBack();
             }, 600);
           }
+          isDiabled.value = false;
         }
       } catch (error) {
         console.log(error);
+        isDiabled.value = false;
         showModalError("提交失败");
       }
     };
@@ -311,27 +347,41 @@ export default defineComponent({
     const endDate = () => {
       return getDate("end");
     };
-
-    //获取当前日期
-
     //选择日期
     const handleDateChange = (e: object) => {
       console.log("value", e.detail.value);
       currentDate.value = e.detail.value;
       formData.expectDate = e.detail.value;
     };
+    //选择维修方式
+    const handleWayChange = (e: object) => {
+      console.log("value", e.detail.value);
+      currentWay.value = e.detail.value;
+      formData.way = e.detail.value;
+    };
+    //维修方式
+    const wayRange = ["上门维修", "店内维修"];
     //选择图片
     const handleImageSelect = async (e: any, index: number) => {
       showLoading();
       try {
+        isDiabled.value = true;
         console.log("e--->", e, index);
-        const tempFilePath = e.tempFilePaths[0];
-        const imageUrl = await requestUploadImage(tempFilePath);
-        console.log("imageUrl", imageUrl.data.data);
-        formData.repairEquipmentContent[index].equipmentImg.push(
-          imageUrl.data.data
-        );
+        const tempFilePath = e.tempFilePaths;
+        for (let i = 0; i < tempFilePath.length; i++) {
+          const imageUrl = await requestUploadImage(tempFilePath[i]);
+          console.log("imageUrl", imageUrl.data.data);
+          formData.repairEquipmentContent[index].equipmentImg.push(
+            imageUrl.data.data
+          );
+        }
+        // const imageUrl = await requestUploadImage(tempFilePath);
+        // console.log("imageUrl", imageUrl.data.data);
+        // formData.repairEquipmentContent[index].equipmentImg.push(
+        //   imageUrl.data.data
+        // );
         showToast("加载成功", "success");
+        isDiabled.value = false;
         hideLoading();
       } catch (error) {
         console.log(error);
@@ -389,11 +439,14 @@ export default defineComponent({
       },
     };
     return {
+      isDiabled,
       repairWorker,
       handleDeviceDelete,
       deviceNumber,
       currentDate,
+      currentWay,
       handleDateChange,
+      handleWayChange,
       formData,
       getDate,
       startDate,
@@ -406,6 +459,7 @@ export default defineComponent({
       handleDelete,
       handleSelectAddress,
       handleAdd,
+      wayRange,
     };
   },
 });
@@ -515,7 +569,7 @@ export default defineComponent({
             transition: all 0.2s;
             input {
               width: 100%;
-              margin-top: 10rpx;
+              margin-top: 5rpx;
               padding: 20rpx;
               height: 10rpx;
               font-size: $uni-font-size-sm;

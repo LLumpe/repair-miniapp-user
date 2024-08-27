@@ -61,8 +61,37 @@
                 value="isDefault"
                 color="#09C46E"
                 style="transform: scale(0.7)"
-              />是否设为默认地址</checkbox-group
-            >
+              />
+              <span style="font-size: 24rpx"> 是否设为默认地址</span>
+            </checkbox-group>
+          </view>
+        </view>
+        <view class="box-edit-item" style="padding: 0">
+          <view
+            class="box-edit-item-content"
+            style="justify-content: flex-start"
+          >
+            <checkbox-group @change="handleAgreeChange">
+              <checkbox
+                value="agree"
+                color="#09C46E"
+                style="transform: scale(0.7)"
+              />
+              <span style="font-size: 24rpx">
+                我已阅读并同意
+                <a
+                  @click="handleUserservice"
+                  style="display: inline-block; margin: 0 5rpx; color: #09c46e"
+                  >《用户服务协议》</a
+                >
+                和
+                <a
+                  @click="handlePrivacypolicy"
+                  style="display: inline-block; margin: 0 5rpx; color: #09c46e"
+                  >《隐私政策》</a
+                ></span
+              >
+            </checkbox-group>
           </view>
         </view>
         <view class="box-edit-button">
@@ -122,6 +151,7 @@ const formData = reactive({
   name: "",
   phone: "",
   isDefault: 0, //1表示默认，0表示不是默认，默认为0
+  agree: false,
   latitude: 0,
   longitude: 0,
 });
@@ -151,14 +181,27 @@ export default defineComponent({
     const handleSubmit = async () => {
       showLoading("提交中");
       try {
-        console.log("formData", formData);
-        const res = await requestAddUserAddress(formData);
-        console.log("res", res);
-        if (res.data.success) {
-          showToast("添加成功！", "success");
+        if (
+          formData.phone === "" ||
+          formData.city === "" ||
+          formData.province === "" ||
+          formData.district === "" ||
+          formData.name === "" ||
+          formData.address === ""
+        ) {
+          showToast("请完整填写地址信息");
+        } else if (!formData.agree) {
+          showToast("添加失败，您尚未同意用户服务协议和隐私政策");
+        } else {
+          console.log("formData", formData);
+          const res = await requestAddUserAddress(formData);
+          console.log("res", res);
+          if (res.data.success) {
+            showToast("添加成功！", "success");
+          }
+          hideLoading();
+          navigateBack();
         }
-        hideLoading();
-        navigateBack();
       } catch (error) {
         showToast("提交事变");
         console.log("error", error);
@@ -166,6 +209,16 @@ export default defineComponent({
     };
     const handleDefaultChange = (e: any) => {
       formData.isDefault = e.detail.value.includes("isDefault") ? 1 : 0;
+    };
+    const handleAgreeChange = (e: any) => {
+      console.log("e", e);
+      formData.agree = e.detail.value.includes("agree") ? true : false;
+    };
+    const handleUserservice = () => {
+      navigateTo("/pages/privacyPolicy/index");
+    };
+    const handlePrivacypolicy = () => {
+      navigateTo("/pages/privacyPolicy/index");
     };
     const handleSelectCity = () => {
       let key = mapSettings.key; //使用在腾讯位置服务申请的key
@@ -204,6 +257,9 @@ export default defineComponent({
       });
     };
     return {
+      handleUserservice,
+      handlePrivacypolicy,
+      handleAgreeChange,
       handleDefaultChange,
       getUserPhone,
       handleSubmit,
@@ -275,6 +331,7 @@ export default defineComponent({
       box-sizing: border-box;
       &-item {
         display: flex;
+        width: 100%;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;

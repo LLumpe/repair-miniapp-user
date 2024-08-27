@@ -43,7 +43,7 @@
               src="@/static/images/repairDetail/phone-call.png"
             />
             <span style="margin-left: 10rpx; font-size: 26rpx; color: #999">{{
-              orderDetail.familyUser.phone || "未绑定手机号码"
+              orderDetail.phone || "未绑定手机号码"
             }}</span>
           </view>
         </view>
@@ -76,9 +76,7 @@
             "
             v-if="orderDetail.repairEquipmentContent[repairIndex].state !== 0"
             >{{
-              orderDetail.repairEquipmentContent[repairIndex].state === "-8"
-                ? "已退单"
-                : "已返修"
+              tapState[orderDetail.repairEquipmentContent[repairIndex].state]
             }}</view
           >
         </view>
@@ -140,6 +138,18 @@
           </view>
         </view>
         <view class="box-info-item">
+          <view class="box-info-item-label">维修方式</view>
+          <view class="box-info-item-value">
+            {{
+              orderDetail.way === 0
+                ? "上门维修"
+                : orderDetail.way === 1
+                ? "店内维修"
+                : "无"
+            }}
+          </view>
+        </view>
+        <view class="box-info-item">
           <view class="box-info-item-label">维修地址</view>
           <view class="box-info-item-value">
             {{
@@ -172,7 +182,7 @@
             @click="handleCheckRepair(orderDetail.repairOrderId)"
           >
             <text
-              class="iconfont icon-arrow-right"
+              class="iconfont ico n-arrow-right"
               style="transform: rotate(180deg); display: inline-block"
             />
             查询返修订单
@@ -195,10 +205,7 @@
       >
         <view class="phone">
           <view class="phone-title">联系用户</view>
-          <view
-            class="phone-number"
-            @click="handleCallUser(orderDetail.familyUser.phone)"
-          >
+          <view class="phone-number" @click="handleCallUser(orderDetail.phone)">
             <view style="display: flex; align-items: center">
               <image
                 style="width: 40rpx; height: 40rpx; margin-right: 20rpx"
@@ -251,7 +258,6 @@
 <script lang="ts">
 import { ref, Ref, reactive, defineComponent, watch } from "vue";
 import UPopup from "@/components/UPopup/index.vue";
-import jestConfig from "jest.config";
 import {
   hideLoading,
   navigateTo,
@@ -280,11 +286,21 @@ export default defineComponent({
   },
   setup(props) {
     console.log("props---->", props.orderDetail);
-
+    repairIndex.value = 0;
     //待维修设备选择设备
     const handlePickDevice = (e: any) => {
       console.log("value", e.target.value);
       repairIndex.value = e.target.value;
+    };
+    //订单状态
+    const tapState = {
+      "0": "正常状态",
+      "-3": "退单申请中",
+      "-4": "退单申请失败",
+      "-5": "已退单",
+      "-6": "返修申请中",
+      "-7": "返修申请失败",
+      "-8": "已返修",
     };
     //放大图片
     const showImageEvent = (item: any, index: number) => {
@@ -406,6 +422,7 @@ export default defineComponent({
       { immediate: true }
     );
     return {
+      tapState,
       handleCheckRepair,
       handleCheckBack,
       repairIndex,

@@ -37,6 +37,12 @@
       }
     },
     {
+      "path": "pages/privacyPolicy/index",
+      "style": {
+        "navigationBarTitleText": "隐私政策"
+      }
+    },
+    {
       "path": "pages/publishOrder/index",
       "style": {
         "navigationBarTitleText": "发布维修订单",
@@ -112,7 +118,7 @@
     {
       "path": "pages/announcement/index",
       "style": {
-        "navigationBarTitleText": "公告详情"
+        "navigationBarTitleText": "公告"
       }
     },
     {

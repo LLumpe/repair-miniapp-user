@@ -1,3 +1,13 @@
+<!--
+ * @Author: LLumpe LLumpe@163.com
+ * @Date: 2024-07-13 12:11:59
+ * @LastEditors: LLumpe LLumpe@163.com
+ * @LastEditTime: 2024-08-13 13:06:46
+ * @FilePath: \repair-miniapp-user\src\pages\index\components\Mall\index.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
+-->
 <template>
   <view class="box" @click="handleClickMissionRoom()">
     <view class="border">
@@ -8,10 +18,10 @@
       />
       <view class="text">
         <view class="first-text">
-          <view style="height: 56rpx"> 商城 </view>
+          <view style="height: 56rpx"> 更多功能 </view>
         </view>
         <view class="second-text">
-          <view style="height: 34rpx"> 在这里查看所有可购买家具 </view>
+          <view style="height: 34rpx"> 更多功能敬请期待 </view>
         </view>
       </view>
     </view>
@@ -19,14 +29,16 @@
 </template>
 
 <script lang="ts">
+import { showToast } from "@/utils/helper";
 import { defineComponent } from "vue";
 export default defineComponent({
   name: "Mall",
   setup() {
     function handleClickMissionRoom() {
-      uni.switchTab({
-        url: "/pages/mall/index",
-      });
+      showToast("更多功能敬请期待");
+      // uni.switchTab({
+      //   url: "/pages/mall/index",
+      // });
     }
     return { handleClickMissionRoom };
   },

@@ -6,9 +6,10 @@
         <view class="box-edit-item">
           <title>城市</title>
           <view class="box-edit-item-content" @click="handleSelectCity">
-            <view class="box-eidt-item-content-text">{{
+            <!-- <view class="box-eidt-item-content-text">{{
               formData.city || "请选择城市"
-            }}</view>
+            }}</view> -->
+            <input v-model="formData.city" placeholder="请选择城市" disabled />
             <text class="iconfont icon-arrow-right" />
           </view>
         </view>
@@ -205,10 +206,16 @@ export default defineComponent({
   .box {
     width: 100%;
     &-notice {
-      width: 100%;
-      height: 70rpx;
-      background-color: #ffffff;
+      width: 720rpx;
+      height: 78rpx;
+      margin: 10rpx auto 0 auto;
+      position: relative;
+      bottom: -30rpx;
+      z-index: -1;
+      background-color: #fafafa;
       line-height: 70rpx;
+      border-top-left-radius: 20rpx;
+      border-top-right-radius: 20rpx;
       text-align: center;
       font-weight: 600;
       color: $uni-color-error;
@@ -245,13 +252,14 @@ export default defineComponent({
           color: $uni-text-color-grey;
           input {
             display: flex;
-            font-size: $uni-font-size-base;
-            color: $uni-text-color-grey;
             overflow: auto;
           }
           image {
             width: 50rpx;
             height: 50rpx;
+          }
+          &-text {
+            color: $uni-text-color-grey;
           }
         }
       }

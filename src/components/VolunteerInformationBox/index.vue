@@ -8,7 +8,7 @@
           backgroundImage:
             status !== 'unlogin' && avatarUrl ? `url(${avatarUrl})` : null,
         }"
-      ></view>
+      />
       <view class="name">
         <span class="name-lg">
           {{ status !== "unlogin" ? name || "匿名用户" : "登录/注册" }}

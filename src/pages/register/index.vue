@@ -11,6 +11,25 @@
         @codeChange="handleCodeChange"
       />
     </view>
+    <view v-if="step === 1" style="margin-top: 50rpx">
+      <checkbox-group @change="handleAgreeChange">
+        <checkbox value="agree" color="#09C46E" style="transform: scale(0.7)" />
+        <span style="font-size: 24rpx">
+          我已阅读并同意
+          <a
+            @click="handlePrivacypolicy"
+            style="display: inline-block; margin: 0 5rpx; color: #09c46e"
+            >《用户服务协议》</a
+          >
+          和
+          <a
+            @click="handlePrivacypolicy"
+            style="display: inline-block; margin: 0 5rpx; color: #09c46e"
+            >《隐私政策》</a
+          ></span
+        >
+      </checkbox-group>
+    </view>
     <!-- <view v-if="step === 2" class="step">
       <view class="title"> 绑定个人身份信息 </view>
       <u-input
@@ -59,7 +78,7 @@ import {
   requestBindVolunteerInformation,
   requestUpdateWechatUserInfo,
 } from "@/api/user";
-import { navigateBack, showToast } from "@/utils/helper";
+import { navigateBack, navigateTo, showToast } from "@/utils/helper";
 import store from "@/store";
 
 const step = ref(1);
@@ -68,6 +87,7 @@ const useSmsVerify = () => {
   const smsForm = reactive({
     phone: "",
     code: "",
+    agree: false,
   });
 
   const handlePhoneChange = (val: string) => {
@@ -78,6 +98,11 @@ const useSmsVerify = () => {
     smsForm.code = val;
   };
 
+  const handleAgreeChange = (e: any) => {
+    console.log("e", e);
+    smsForm.agree = e.detail.value.includes("agree") ? true : false;
+  };
+
   const verifyPhone = async () => {
     await requestBindPhone({
       phone: smsForm.phone,
@@ -85,7 +110,13 @@ const useSmsVerify = () => {
     });
   };
 
-  return { smsForm, handlePhoneChange, handleCodeChange, verifyPhone };
+  return {
+    smsForm,
+    handlePhoneChange,
+    handleCodeChange,
+    verifyPhone,
+    handleAgreeChange,
+  };
 };
 
 const useProfileVerify = () => {
@@ -93,7 +124,6 @@ const useProfileVerify = () => {
     name: "",
     IDCard: "",
   });
-
   const verifyProfile = async (userInfo: UniApp.GetUserInfoRes) => {
     await requestBindVolunteerInformation({
       name: profileForm.name,
@@ -114,14 +144,17 @@ export default defineComponent({
     const smsVerify = useSmsVerify();
     const profileVerify = useProfileVerify();
     const isLoading = ref(false);
-
     const handleNextStep = async (userInfoRes: any) => {
       const userInfo: UniApp.GetUserInfoRes = userInfoRes.detail;
 
       isLoading.value = true;
       if (step.value === 1) {
         try {
-          await smsVerify.verifyPhone();
+          if (!smsVerify.smsForm.agree) {
+            showToast("绑定失败，您尚未同意用户服务协议和隐私政策");
+          } else {
+            await smsVerify.verifyPhone();
+          }
         } catch (e) {
           console.log(e);
         }
@@ -138,7 +171,9 @@ export default defineComponent({
       // }
       isLoading.value = false;
     };
-
+    const handlePrivacypolicy = () => {
+      navigateTo("/pages/privacyPolicy/index");
+    };
     const isAllowNextStep = computed(() => {
       if (step.value === 1) {
         return (
@@ -152,8 +187,8 @@ export default defineComponent({
         );
       }
     });
-
     return {
+      handlePrivacypolicy,
       step,
       isAllowNextStep,
       handleNextStep,
